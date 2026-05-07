@@ -1,1 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bazsinia Presidential Election 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --gold: #C9A84C;
+      --gold-light: #E8C97A;
+      --deep: #0D0D0D;
+      --dark: #111111;
+      --panel: #181818;
+      --border: #2A2A2A;
+      --text: #F0EDE6;
+      --muted: #888880;
+      --red: #8B1A1A;
+      --green: #2A5C3F;
+    }
 
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--deep);
+      color: var(--text);
+      font-family: 'EB Garamond', Georgia, serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0; opacity: 0.35;
+    }
+
+    header {
+      position: relative;
+      text-align: center;
+      padding: 60px 20px 40px;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    header::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    }
+
+    .flag-stripe {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 6px;
+      background: linear-gradient(90deg,
+        var(--red) 0%, var(--red) 33.3%,
+        var(--gold) 33.3%, var(--gold) 66.6%,
+        var(--green) 66.6%, var(--green) 100%);
+    }
+
+    .seal {
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      border: 2px solid var(--gold);
+      background: radial-gradient(circle, #1a1500, #0D0D0D);
+      font-size: 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 30px rgba(201,168,76,0.2);
+      animation: sealGlow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes sealGlow {
+      from { box-shadow: 0 0 20px rgba(201,168,76,0.15); }
+      to   { box-shadow: 0 0 40px rgba(201,168,76,0.4); }
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 4.2rem);
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #9A7430 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.1;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-style: italic;
+      font-size: 1.1rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .election-date {
+      display: inline-block;
+      margin-top: 18px;
+      padding: 6px 20px;
+      border: 1px solid var(--gold);
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      border-radius: 2px;
+    }
+
+    #status-banner {
+      text-align: center;
+      padding: 18px 20px;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.5s;
+    }
+
+    #status-banner.waiting {
+      background: rgba(139,26,26,0.12);
+      color: #C07070;
+    }
+    #status-banner.open {
+      background: rgba(42,92,63,0.2);
+      color: #7BC49A;
+    }
+    #status-banner.closed {
+      background: rgba(40,40,40,0.8);
+      color: var(--muted);
+    }
+
+    #countdown { font-family: 'Playfair Display', serif; font-weight: 700; }
+
+  
+    main {
+      position: relative; z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 60px 20px 80px;
+    }
+
+    .section-label {
+      text-align: center;
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 40px;
+    }
+
+    .candidates {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+
+    .candidate-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .candidate-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.5), 0 0 20px rgba(201,168,76,0.1);
+    }
+
+    .candidate-card.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px var(--gold), 0 12px 40px rgba(201,168,76,0.2);
+    }
+
+    .candidate-card.selected::after {
+      content: '✓ SELECTED';
+      position: absolute;
+      top: 12px; right: 12px;
+      background: var(--gold);
+      color: #000;
+      font-size: 0.65rem;
+      font-family: 'EB Garamond', serif;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: 2px;
+    }
+
+    .poster-wrap {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      background: #1a1a1a;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .poster-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s;
+    }
+
+    .candidate-card:hover .poster-wrap img {
+      transform: scale(1.03);
+    }
+
+    .poster-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--border);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      gap: 12px;
+      background: repeating-linear-gradient(
+        45deg,
+        #161616,
+        #161616 10px,
+        #1a1a1a 10px,
+        #1a1a1a 20px
+      );
+    }
+
+    .poster-placeholder svg { opacity: 0.3; }
+
+    .candidate-info {
+      padding: 20px 22px 22px;
+      border-top: 1px solid var(--border);
+    }
+
+    .candidate-number {
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .candidate-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .candidate-party {
+      font-style: italic;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .vote-section {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #vote-btn {
+      padding: 16px 52px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #9A7430, var(--gold), #9A7430);
+      background-size: 200% 100%;
+      color: #000;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background-position 0.4s, opacity 0.3s, transform 0.2s;
+    }
+
+    #vote-btn:hover:not(:disabled) {
+      background-position: 100% 0;
+      transform: translateY(-2px);
+    }
+
+    #vote-btn:disabled {
+      background: #2a2a2a;
+      color: var(--muted);
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .vote-note {
+      margin-top: 12px;
+      font-style: italic;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    #modal-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+    #modal-overlay.show { display: flex; }
+
+    #modal {
+      background: var(--panel);
+      border: 1px solid var(--gold);
+      border-radius: 4px;
+      padding: 48px 52px;
+      text-align: center;
+      max-width: 440px;
+      width: 90%;
+      animation: modalIn 0.35s cubic-bezier(.22,.61,.36,1) forwards;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.88) translateY(20px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    #modal .icon { font-size: 48px; margin-bottom: 16px; }
+    #modal h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold-light); margin-bottom: 10px; }
+    #modal p { color: var(--muted); font-style: italic; font-size: 1rem; line-height: 1.6; }
+
+    #modal-close {
+      margin-top: 28px;
+      padding: 10px 32px;
+      background: transparent;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: background 0.2s, color 0.2s;
+    }
+    #modal-close:hover { background: var(--gold); color: #000; }
+
+    footer {
+      text-align: center;
+      padding: 28px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-style: italic;
+      font-size: 0.85rem;
+      position: relative; z-index: 1;
+    }
+
+    footer span { color: var(--gold); }
+
+    .ornament {
+      text-align: center;
+      color: var(--gold);
+      font-size: 1.2rem;
+      letter-spacing: 0.5em;
+      margin: 0 0 40px;
+      opacity: 0.5;
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: fadeUp 0.6s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: 0.1s; }
+    .fade-up:nth-child(2) { animation-delay: 0.25s; }
+    .fade-up:nth-child(3) { animation-delay: 0.4s; }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      #modal { padding: 32px 24px; }
+      .candidates { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="flag-stripe"></div>
+    <div class="seal">🦅</div>
+    <h1>Bazsinia</h1>
+    <p class="subtitle">Presidential Election — 2026</p>
+    <div class="election-date">Election Day &mdash; 15 May 2026</div>
+  </header>
+
+  <div id="status-banner" class="waiting">
+    <span id="status-text">Loading…</span>
+  </div>
+
+  <main>
+    <p class="section-label">— Cast Your Vote for the Next President —</p>
+    <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+
+    <div class="candidates">
+
+      <!-- CANDIDATE 1 -->
+      <div class="candidate-card fade-up" data-id="1" onclick="selectCandidate(this)">
+        <div class="poster-wrap">
+          <img id="poster-1" src="poster1.jpg" alt="Candidate 1 Poster"
+               onerror="this.style.display='none'; document.getElementById('ph-1').style.display='flex';">
+          <div id="ph-1" class="poster-placeholder" style="display:none;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Poster Coming Soon
+          </div>
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-number">Candidate No. 1</div>
+          <div class="candidate-name">— Your Candidate —</div>
+          <div class="candidate-party">Party Name</div>
+        </div>
+      </div>
+
+      <!-- CANDIDATE 2 -->
+      <div class="candidate-card fade-up" data-id="2" onclick="selectCandidate(this)">
+        <div class="poster-wrap">
+          <img id="poster-2" src="poster2.jpg" alt="Candidate 2 Poster"
+               onerror="this.style.display='none'; document.getElementById('ph-2').style.display='flex';">
+          <div id="ph-2" class="poster-placeholder" style="display:none;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Poster Coming Soon
+          </div>
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-number">Candidate No. 2</div>
+          <div class="candidate-name">— Your Candidate —</div>
+          <div class="candidate-party">Party Name</div>
+        </div>
+      </div>
+
+            <!-- CANDIDATE 3 -->
+      <div class="candidate-card fade-up" data-id="1" onclick="selectCandidate(this)">
+        <div class="poster-wrap">
+          <img id="poster-1" src="poster1.jpg" alt="Candidate 1 Poster"
+               onerror="this.style.display='none'; document.getElementById('ph-1').style.display='flex';">
+          <div id="ph-1" class="poster-placeholder" style="display:none;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Poster Coming Soon
+          </div>
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-number">Candidate No. 1</div>
+          <div class="candidate-name">— Your Candidate —</div>
+          <div class="candidate-party">Party Name</div>
+        </div>
+      </div>
+
+      <!-- CANDIDATE 4 -->
+      <div class="candidate-card fade-up" data-id="3" onclick="selectCandidate(this)">
+        <div class="poster-wrap">
+          <img id="poster-3" src="poster3.jpg" alt="Candidate 3 Poster"
+               onerror="this.style.display='none'; document.getElementById('ph-3').style.display='flex';">
+          <div id="ph-3" class="poster-placeholder" style="display:none;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            Poster Coming Soon
+          </div>
+        </div>
+        <div class="candidate-info">
+          <div class="candidate-number">Candidate No. 3</div>
+          <div class="candidate-name">— Your Candidate —</div>
+          <div class="candidate-party">Party Name</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="vote-section">
+      <button id="vote-btn" disabled onclick="submitVote()">Cast Your Vote</button>
+      <p class="vote-note" id="vote-note">Select a candidate to cast your vote.</p>
+    </div>
+  </main>
+
+  <div id="modal-overlay">
+    <div id="modal">
+      <div class="icon" id="modal-icon">🗳️</div>
+      <h2 id="modal-title">Vote Recorded</h2>
+      <p id="modal-body">Your vote has been recorded. Thank you for participating in the democratic future of Bazsinia.</p>
+      <button id="modal-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission &nbsp;·&nbsp; 2026</p>
+    <p style="margin-top:6px;">Voting is open on <span>15 May 2026</span> only.</p>
+  </footer>
+
+  <script>
+    const ELECTION_DATE = { year: 2026, month: 5, day: 15 }; // May 15
+
+    let selectedId = null;
+    let hasVoted = false;
+    let votingOpen = false;
+
+    function getLocalDateParts() {
+      const now = new Date();
+      return { year: now.getFullYear(), month: now.getMonth() + 1, day: now.getDate() };
+    }
+
+    function updateStatus() {
+      const { year, month, day } = getLocalDateParts();
+      const banner = document.getElementById('status-banner');
+      const statusText = document.getElementById('status-text');
+      const voteBtn = document.getElementById('vote-btn');
+      const voteNote = document.getElementById('vote-note');
+
+      const isElectionDay =
+        year === ELECTION_DATE.year &&
+        month === ELECTION_DATE.month &&
+        day === ELECTION_DATE.day;
+
+      const isPast =
+        year > ELECTION_DATE.year ||
+        (year === ELECTION_DATE.year && month > ELECTION_DATE.month) ||
+        (year === ELECTION_DATE.year && month === ELECTION_DATE.month && day > ELECTION_DATE.day);
+
+      if (isElectionDay && !hasVoted) {
+        votingOpen = true;
+        banner.className = 'open';
+        statusText.textContent = '🗳️  Polls are OPEN — Today is Election Day! Cast your vote below.';
+        voteNote.textContent = selectedId ? 'Click "Cast Your Vote" to confirm your choice.' : 'Select a candidate to cast your vote.';
+        if (selectedId) voteBtn.disabled = false;
+      } else if (hasVoted) {
+        votingOpen = false;
+        banner.className = 'closed';
+        statusText.textContent = '✅  You have already cast your vote. Thank you!';
+        voteBtn.disabled = true;
+        voteNote.textContent = 'Your vote has been recorded.';
+      } else if (isPast) {
+        votingOpen = false;
+        banner.className = 'closed';
+        statusText.textContent = '🏛️  The polls have closed. Results will be announced soon.';
+        voteBtn.disabled = true;
+        voteNote.textContent = 'Voting has ended.';
+      } else {
+        votingOpen = false;
+        banner.className = 'waiting';
+        const target = new Date(ELECTION_DATE.year, ELECTION_DATE.month - 1, ELECTION_DATE.day);
+        const now = new Date();
+        const diff = target - now;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        statusText.innerHTML = `⏳ Voting opens on <strong>15 May 2026</strong> &nbsp;—&nbsp; <span id="countdown">${days}d ${hours}h ${mins}m ${secs}s</span> remaining`;
+        voteBtn.disabled = true;
+        voteNote.textContent = 'Voting is only available on May 15, 2026.';
+      }
+    }
+
+    function selectCandidate(card) {
+      if (!votingOpen) return;
+      document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedId = card.dataset.id;
+      document.getElementById('vote-btn').disabled = false;
+      document.getElementById('vote-note').textContent = 'Click "Cast Your Vote" to confirm your choice.';
+    }
+
+    function submitVote() {
+      if (!selectedId || !votingOpen) return;
+
+      const cardName = document.querySelector(`.candidate-card[data-id="${selectedId}"] .candidate-name`).textContent.trim();
+      hasVoted = true;
+      votingOpen = false;
+
+      document.getElementById('modal-icon').textContent = '🗳️';
+      document.getElementById('modal-title').textContent = 'Vote Recorded!';
+      document.getElementById('modal-body').textContent =
+        `Your vote for ${cardName} has been recorded. Thank you for participating in the democratic future of the Republic of Bazsinia.`;
+
+      document.getElementById('modal-overlay').classList.add('show');
+      updateStatus();
+
+      document.querySelectorAll('.candidate-card').forEach(c => {
+        c.style.pointerEvents = 'none';
+        c.style.opacity = c.dataset.id === selectedId ? '1' : '0.45';
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('show');
+    }
+
+    document.getElementById('modal-overlay').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    updateStatus();
+    setInterval(updateStatus, 1000);
+  </script>
+</body>
+</html>
