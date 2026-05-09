@@ -1,262 +1,534 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Bazsinia Presidential Election 2026</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
-  <style>
-    :root {
-      --gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;
-      --border:#2A2A2A;--text:#F0EDE6;--muted:#888880;
-      --Fidesz:#FF7A00;--Fidesz-dim:rgba(255,122,0,0.12);
-      --Tisza:#3A8FE8;--Tisza-dim:rgba(58,143,232,0.12);
-    }
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh;overflow-x:hidden}
-    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.35}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia Presidential Election 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--fidesz:#FF7A00;--fidesz-dim:rgba(255,122,0,0.12);--tisza:#3A8FE8;--tisza-dim:rgba(58,143,232,0.12);--green:#2A5C3F;--red:#8B1A1A}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
 
-    header{position:relative;text-align:center;padding:60px 20px 40px;border-bottom:1px solid var(--border)}
-    header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
-    .flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
-    .seal{display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:32px;margin-bottom:20px;animation:sealGlow 3s ease-in-out infinite alternate}
-    @keyframes sealGlow{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
-    h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,4.2rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light) 0%,var(--gold) 50%,#9A7430 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
-    .subtitle{margin-top:10px;font-style:italic;font-size:1.1rem;color:var(--muted);letter-spacing:.04em}
-    .election-date{display:inline-block;margin-top:18px;padding:6px 20px;border:1px solid var(--gold);font-size:.85rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-light);border-radius:2px}
+.auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.auth-screen.active{display:flex}
+.auth-box{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:44px 40px;width:100%;max-width:420px;text-align:center}
+.auth-seal{font-size:38px;margin-bottom:14px;display:block}
+.auth-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:900;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.auth-sub{font-style:italic;color:var(--muted);font-size:.9rem;margin-bottom:28px}
+.input-group{margin-bottom:14px;text-align:left}
+.input-group label{display:block;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.input-group input{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:1rem;padding:10px 13px;border-radius:2px;outline:none;transition:border-color .2s}
+.input-group input:focus{border-color:var(--gold)}
+.auth-btn{width:100%;margin-top:6px;padding:12px;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s,opacity .2s}
+.auth-btn:hover:not(:disabled){background-position:100%}
+.auth-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.auth-switch{margin-top:16px;font-size:.88rem;color:var(--muted)}
+.auth-switch a{color:var(--gold);cursor:pointer;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+.auth-error{margin-top:10px;color:#C07070;font-style:italic;font-size:.87rem;min-height:18px}
+.auth-success{margin-top:10px;color:#7BC49A;font-style:italic;font-size:.87rem;min-height:18px}
 
-    #status-banner{text-align:center;padding:18px 20px;font-size:1rem;letter-spacing:.05em;border-bottom:1px solid var(--border);transition:background .5s}
-    #status-banner.waiting{background:rgba(139,26,26,.12);color:#C07070}
-    #status-banner.open{background:rgba(42,92,63,.2);color:#7BC49A}
-    #status-banner.closed{background:rgba(40,40,40,.8);color:var(--muted)}
+header{position:relative;text-align:center;padding:48px 20px 34px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:26px;margin-bottom:14px;animation:sealGlow 3s ease-in-out infinite alternate}
+@keyframes sealGlow{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.4rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.subtitle{margin-top:7px;font-style:italic;font-size:.95rem;color:var(--muted)}
+.election-date{display:inline-block;margin-top:12px;padding:4px 16px;border:1px solid var(--gold);font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;color:var(--gold-light);border-radius:2px}
+.user-bar{position:absolute;top:14px;right:16px;display:flex;align-items:center;gap:8px}
+.user-name{font-size:.78rem;color:var(--muted);font-style:italic}
+.logout-btn{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;letter-spacing:.08em;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s}
+.logout-btn:hover{border-color:var(--gold);color:var(--gold)}
 
-    main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:60px 20px 80px}
-    .section-label{text-align:center;font-size:.78rem;letter-spacing:.25em;text-transform:uppercase;color:var(--gold);margin-bottom:40px}
-    .ornament{text-align:center;color:var(--gold);font-size:1.2rem;letter-spacing:.5em;margin:0 0 48px;opacity:.4}
-    .divider{border:none;border-top:1px solid var(--border);margin:52px 0}
+#status-banner{text-align:center;padding:14px 20px;font-size:.92rem;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+#status-banner.waiting{background:rgba(139,26,26,.12);color:#C07070}
+#status-banner.open{background:rgba(42,92,63,.2);color:#7BC49A}
+#status-banner.closed{background:rgba(40,40,40,.8);color:var(--muted)}
+#status-banner.delayed{background:rgba(80,60,0,.2);color:#C9A84C}
 
-    .party-section{margin-bottom:64px}
-    .party-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);position:relative}
-    .party-header::after{content:'';position:absolute;bottom:-1px;left:0;width:80px;height:2px}
-    .party-header.Fidesz::after{background:var(--Fidesz)}
-    .party-header.Tisza::after{background:var(--Tisza)}
-    .party-badge{padding:4px 14px;border-radius:2px;font-size:.75rem;font-family:'EB Garamond',serif;letter-spacing:.15em;text-transform:uppercase;font-weight:600}
-    .party-badge.Fidesz{background:var(--Fidesz-dim);color:var(--Fidesz);border:1px solid rgba(255,122,0,.35)}
-    .party-badge.Tisza{background:var(--Tisza-dim);color:var(--Tisza);border:1px solid rgba(58,143,232,.35)}
-    .party-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700}
-    .party-name.Fidesz{color:var(--Fidesz)}
-    .party-name.Tisza{color:var(--Tisza)}
-    .party-count{font-style:italic;color:var(--muted);font-size:.95rem;margin-left:auto}
+main{max-width:1200px;margin:0 auto;padding:48px 20px 70px}
+.ornament{text-align:center;color:var(--gold);font-size:1.1rem;letter-spacing:.5em;margin:0 0 42px;opacity:.4}
+.divider{border:none;border-top:1px solid var(--border);margin:46px 0}
 
-    .candidates{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
-    .candidates.single{grid-template-columns:minmax(200px,300px)}
+.party-section{margin-bottom:52px}
+.party-header{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:12px;border-bottom:1px solid var(--border);position:relative}
+.party-header::after{content:'';position:absolute;bottom:-1px;left:0;width:70px;height:2px}
+.party-header.fidesz::after{background:var(--fidesz)}
+.party-header.tisza::after{background:var(--tisza)}
+.party-badge{padding:3px 11px;border-radius:2px;font-size:.7rem;font-family:'EB Garamond',serif;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.party-badge.fidesz{background:var(--fidesz-dim);color:var(--fidesz);border:1px solid rgba(255,122,0,.3)}
+.party-badge.tisza{background:var(--tisza-dim);color:var(--tisza);border:1px solid rgba(58,143,232,.3)}
+.party-name-h{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700}
+.party-name-h.fidesz{color:var(--fidesz)}.party-name-h.tisza{color:var(--tisza)}
+.party-count{font-style:italic;color:var(--muted);font-size:.88rem;margin-left:auto}
 
-    .candidate-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;cursor:pointer;position:relative}
-    .candidate-card:hover{transform:translateY(-4px)}
-    .Fidesz-card:hover{border-color:var(--Fidesz)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(255,122,0,.12)}
-    .Tisza-card:hover{border-color:var(--Tisza)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(58,143,232,.12)}
-    .candidate-card.selected.Fidesz-card{border-color:var(--Fidesz);box-shadow:0 0 0 2px var(--Fidesz),0 12px 40px rgba(255,122,0,.2)}
-    .candidate-card.selected.Tisza-card{border-color:var(--Tisza);box-shadow:0 0 0 2px var(--Tisza),0 12px 40px rgba(58,143,232,.2)}
-    .candidate-card.selected::after{content:'✓ SELECTED';position:absolute;top:10px;right:10px;background:var(--gold);color:#000;font-size:.6rem;font-weight:600;letter-spacing:.12em;padding:3px 7px;border-radius:2px}
+.candidates{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.candidates.double{display:grid;grid-template-columns:repeat(2,minmax(180px,240px));gap:16px}
+.candidate-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;cursor:pointer;position:relative}
+.candidate-card:hover{transform:translateY(-3px)}
+.fidesz-card:hover{border-color:var(--fidesz)!important;box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 14px rgba(255,122,0,.1)}
+.tisza-card:hover{border-color:var(--tisza)!important;box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 14px rgba(58,143,232,.1)}
+.candidate-card.selected.fidesz-card{border-color:var(--fidesz);box-shadow:0 0 0 2px var(--fidesz)}
+.candidate-card.selected.tisza-card{border-color:var(--tisza);box-shadow:0 0 0 2px var(--tisza)}
+.candidate-card.selected::after{content:'✓';position:absolute;top:8px;right:8px;background:var(--gold);color:#000;font-size:.7rem;font-weight:700;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.candidate-card.dim{pointer-events:none;opacity:.35}
+.poster-wrap{width:100%;aspect-ratio:3/4;background:#1a1a1a;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.poster-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.candidate-card:hover .poster-wrap img{transform:scale(1.03)}
+.poster-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3a3a3a;font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;gap:8px;background:repeating-linear-gradient(45deg,#161616,#161616 10px,#1a1a1a 10px,#1a1a1a 20px)}
+.candidate-info{padding:11px 13px 13px;border-top:1px solid var(--border)}
+.cnum{font-size:.63rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:2px}
+.cnum.fidesz{color:var(--fidesz)}.cnum.tisza{color:var(--tisza)}
+.cname{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;line-height:1.2}
 
-    .poster-wrap{width:100%;aspect-ratio:3/4;background:#1a1a1a;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
-    .poster-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s}
-    .candidate-card:hover .poster-wrap img{transform:scale(1.03)}
-    .poster-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#444;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;gap:10px;background:repeating-linear-gradient(45deg,#161616,#161616 10px,#1a1a1a 10px,#1a1a1a 20px)}
+.vote-section{text-align:center;margin-top:40px}
+#vote-btn{padding:13px 44px;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s,transform .2s}
+#vote-btn:hover:not(:disabled){background-position:100%;transform:translateY(-2px)}
+#vote-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed;transform:none}
+.vote-note{margin-top:9px;font-style:italic;color:var(--muted);font-size:.86rem}
 
-    .candidate-info{padding:14px 16px 16px;border-top:1px solid var(--border)}
-    .cnum{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:3px}
-    .cnum.Fidesz{color:var(--Fidesz)}.cnum.Tisza{color:var(--Tisza)}
-    .cname{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.2;margin-bottom:3px}
-    .cparty{font-style:italic;color:var(--muted);font-size:.85rem}
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:300;align-items:center;justify-content:center}
+#modal-overlay.show{display:flex}
+#modal{background:var(--panel);border:1px solid var(--gold);border-radius:4px;padding:42px 46px;text-align:center;max-width:400px;width:90%;animation:mIn .35s cubic-bezier(.22,.61,.36,1)}
+@keyframes mIn{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:translateY(0)}}
+#modal .micon{font-size:42px;margin-bottom:12px}
+#modal h2{font-family:'Playfair Display',serif;font-size:1.6rem;color:var(--gold-light);margin-bottom:8px}
+#modal p{color:var(--muted);font-style:italic;font-size:.92rem;line-height:1.6}
+#modal-close{margin-top:22px;padding:8px 26px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.88rem;letter-spacing:.1em;cursor:pointer;border-radius:2px;transition:background .2s,color .2s}
+#modal-close:hover{background:var(--gold);color:#000}
 
-    .vote-section{text-align:center;margin-top:48px}
-    #vote-btn{padding:16px 52px;font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200% 100%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s,transform .2s}
-    #vote-btn:hover:not(:disabled){background-position:100% 0;transform:translateY(-2px)}
-    #vote-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed;transform:none}
-    .vote-note{margin-top:12px;font-style:italic;color:var(--muted);font-size:.9rem}
+#admin-screen{display:none;max-width:960px;margin:0 auto;padding:36px 20px 60px}
+.admin-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:28px;padding-bottom:18px;border-bottom:1px solid var(--border)}
+.admin-title{font-family:'Playfair Display',serif;font-size:1.7rem;color:var(--gold-light)}
+.admin-actions{display:flex;gap:8px;flex-wrap:wrap}
+.admin-btn{padding:8px 18px;font-family:'EB Garamond',serif;font-size:.85rem;letter-spacing:.08em;cursor:pointer;border-radius:2px;transition:all .2s}
+.btn-start{background:rgba(42,92,63,.25);border:1px solid #2A5C3F;color:#7BC49A}
+.btn-start:hover{background:rgba(42,92,63,.5)}
+.btn-delay{background:rgba(139,100,0,.2);border:1px solid #8B6400;color:#C9A84C}
+.btn-delay:hover{background:rgba(139,100,0,.4)}
+.btn-stop{background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070}
+.btn-stop:hover{background:rgba(139,26,26,.4)}
+.btn-refresh{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-refresh:hover{border-color:var(--gold);color:var(--gold)}
+.btn-logout{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.btn-logout:hover{border-color:var(--gold);color:var(--gold)}
+.voting-status-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:2px;font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:20px}
+.vsb-open{background:rgba(42,92,63,.2);border:1px solid #2A5C3F;color:#7BC49A}
+.vsb-closed{background:rgba(139,26,26,.12);border:1px solid #8B1A1A;color:#C07070}
+.vsb-delayed{background:rgba(139,100,0,.15);border:1px solid #8B6400;color:#C9A84C}
+.admin-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:28px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px;text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--gold-light)}
+.stat-label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.admin-table-wrap{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;overflow-x:auto}
+.admin-table-title{padding:14px 18px;border-bottom:1px solid var(--border);font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+table{width:100%;border-collapse:collapse;min-width:500px}
+th{padding:9px 14px;text-align:left;font-size:.68rem;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);font-weight:400}
+td{padding:11px 14px;font-size:.9rem;border-bottom:1px solid rgba(42,42,42,.5)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.018)}
+.tag-yes{color:#7BC49A;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+.tag-no{color:var(--muted);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+.pill{display:inline-block;padding:2px 8px;border-radius:2px;font-size:.72rem}
+.pill-f{background:var(--fidesz-dim);color:var(--fidesz)}
+.pill-t{background:var(--tisza-dim);color:var(--tisza)}
+.pill-none{color:var(--muted)}
 
-    #modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:100;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-    #modal-overlay.show{display:flex}
-    #modal{background:var(--panel);border:1px solid var(--gold);border-radius:4px;padding:48px 52px;text-align:center;max-width:440px;width:90%;animation:modalIn .35s cubic-bezier(.22,.61,.36,1) forwards}
-    @keyframes modalIn{from{opacity:0;transform:scale(.88) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
-    #modal .icon{font-size:48px;margin-bottom:16px}
-    #modal h2{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold-light);margin-bottom:10px}
-    #modal p{color:var(--muted);font-style:italic;font-size:1rem;line-height:1.6}
-    #modal-close{margin-top:28px;padding:10px 32px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.95rem;letter-spacing:.1em;cursor:pointer;border-radius:2px;transition:background .2s,color .2s}
-    #modal-close:hover{background:var(--gold);color:#000}
-
-    footer{text-align:center;padding:28px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.85rem;position:relative;z-index:1}
-    footer span{color:var(--gold)}
-
-    .fade-up{opacity:0;transform:translateY(24px);animation:fadeUp .6s ease forwards}
-    .fade-up:nth-child(2){animation-delay:.15s}
-    @keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
-    @media(max-width:600px){.candidates{grid-template-columns:1fr 1fr}.candidates.single{grid-template-columns:1fr}#modal{padding:32px 24px}}
-  </style>
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
 </head>
 <body>
 
-<header>
-  <div class="flag-stripe"></div>
-  <div class="seal">🦅</div>
-  <h1>Bazsinia</h1>
-  <p class="subtitle">Presidential Election — 2026</p>
-  <div class="election-date">Election Day &mdash; 15 May 2026</div>
-</header>
+<div class="auth-screen active" id="login-screen">
+  <div class="auth-box">
+    <span class="auth-seal">🦅</span>
+    <div class="auth-title">Bazsinia</div>
+    <div class="auth-sub">Presidential Election 2026 — Sign In</div>
+    <div class="input-group"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email"/></div>
+    <div class="input-group"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"/></div>
+    <button class="auth-btn" id="li-btn" onclick="doLogin()">Sign In</button>
+    <div class="auth-error" id="li-err"></div>
+    <div class="auth-switch">No account? <a onclick="showScreen('signup-screen')">Sign up here</a></div>
+  </div>
+</div>
 
-<div id="status-banner" class="waiting"><span id="status-text">Loading…</span></div>
+<div class="auth-screen" id="signup-screen">
+  <div class="auth-box">
+    <span class="auth-seal">🦅</span>
+    <div class="auth-title">Bazsinia</div>
+    <div class="auth-sub">Create your voter account</div>
+    <div class="input-group"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name" autocomplete="name"/></div>
+    <div class="input-group"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com" autocomplete="email"/></div>
+    <div class="input-group"><label>Password</label><input type="password" id="su-pass" placeholder="Min. 6 characters" autocomplete="new-password"/></div>
+    <button class="auth-btn" id="su-btn" onclick="doSignup()">Create Account</button>
+    <div class="auth-error" id="su-err"></div>
+    <div class="auth-success" id="su-ok"></div>
+    <div class="auth-switch">Already have an account? <a onclick="showScreen('login-screen')">Sign in</a></div>
+  </div>
+</div>
 
-<main>
-  <p class="section-label">— Cast Your Vote for the Next President —</p>
-  <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
-
-  <!-- Fidesz (lena) -->
-  <div class="party-section fade-up">
-    <div class="party-header Fidesz">
-      <span class="party-badge Fidesz">Party</span>
-      <span class="party-name Fidesz">Fidesz</span>
-      <span class="party-count">7 candidates</span>
+<div id="voting-screen" style="display:none">
+  <header>
+    <div class="flag-stripe"></div>
+    <div class="user-bar">
+      <span class="user-name" id="user-display"></span>
+      <button class="logout-btn" onclick="doLogout()">Logout</button>
     </div>
-    <div class="candidates" id="Fidesz-grid"></div>
-  </div>
-
-  <hr class="divider">
-
-  <!-- Tisza (benedek párt)-->
-  <div class="party-section fade-up">
-    <div class="party-header Tisza">
-      <span class="party-badge Tisza">Party</span>
-      <span class="party-name Tisza">Tisza</span>
-      <span class="party-count">2 candidate</span>
+    <div class="seal">🦅</div>
+    <h1>Bazsinia</h1>
+    <p class="subtitle">Presidential Election — 2026</p>
+    <div class="election-date">Election Day — 15 May 2026</div>
+  </header>
+  <div id="status-banner" class="waiting"><span id="status-text">Loading…</span></div>
+  <main>
+    <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
+    <div class="party-section">
+      <div class="party-header fidesz">
+        <span class="party-badge fidesz">Party</span>
+        <span class="party-name-h fidesz">Fidesz</span>
+        <span class="party-count">7 candidates</span>
+      </div>
+      <div class="candidates" id="fidesz-grid"></div>
     </div>
-    <div class="candidates single" id="Tisza-grid"></div>
-  </div>
+    <hr class="divider">
+    <div class="party-section">
+      <div class="party-header tisza">
+        <span class="party-badge tisza">Party</span>
+        <span class="party-name-h tisza">Tisza</span>
+        <span class="party-count">2 candidates</span>
+      </div>
+      <div class="candidates double" id="tisza-grid"></div>
+    </div>
+    <div class="vote-section">
+      <button id="vote-btn" disabled onclick="submitVote()">Cast Your Vote</button>
+      <p class="vote-note" id="vote-note">Select a candidate to cast your vote.</p>
+    </div>
+  </main>
+  <footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission &nbsp;·&nbsp; 2026</p></footer>
+</div>
 
-  <div class="vote-section">
-    <button id="vote-btn" disabled onclick="submitVote()">Cast Your Vote</button>
-    <p class="vote-note" id="vote-note">Select a candidate to cast your vote.</p>
+<div id="admin-screen">
+  <div class="admin-header">
+    <div class="admin-title">🗂 Admin Panel</div>
+    <div class="admin-actions">
+      <button class="admin-btn btn-start" onclick="setVotingState('open')">▶ Start Voting</button>
+      <button class="admin-btn btn-delay" onclick="setVotingState('delayed')">⏸ Delay Voting</button>
+      <button class="admin-btn btn-stop" onclick="setVotingState('closed')">■ Close Voting</button>
+      <button class="admin-btn btn-refresh" onclick="loadAdminData()">↻ Refresh</button>
+      <button class="admin-btn btn-logout" onclick="doLogout()">Logout</button>
+    </div>
   </div>
-</main>
+  <div id="vsb-wrap"></div>
+  <div class="admin-stats">
+    <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">Total Voters</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-voted">—</div><div class="stat-label">Voted</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-pending">—</div><div class="stat-label">Not Voted</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-fidesz">—</div><div class="stat-label">Fidesz Votes</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-tisza">—</div><div class="stat-label">Tisza Votes</div></div>
+  </div>
+  <div class="admin-table-wrap">
+    <div class="admin-table-title">Voter Log</div>
+    <table>
+      <thead><tr><th>Name</th><th>Email</th><th>Last Login</th><th>Voted</th><th>Voted For</th></tr></thead>
+      <tbody id="admin-tbody"><tr><td colspan="5" style="color:var(--muted);text-align:center;padding:22px">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</div>
 
 <div id="modal-overlay">
   <div id="modal">
-    <div class="icon">🗳️</div>
-    <h2 id="modal-title">Vote Recorded!</h2>
-    <p id="modal-body">Thank you for participating.</p>
+    <div class="micon">🗳️</div>
+    <h2 id="m-title">Vote Recorded!</h2>
+    <p id="m-body">Thank you.</p>
     <button id="modal-close" onclick="closeModal()">Close</button>
   </div>
 </div>
 
-<footer>
-  <p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission &nbsp;·&nbsp; 2026</p>
-  <p style="margin-top:6px">Voting is open on <span>15 May 2026</span> only.</p>
-</footer>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, collection, getDocs, updateDoc, serverTimestamp, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-<script>
-  // ── CANDIDATE DATA
-  const Fidesz = [
-    { id:'f1', name:'Kiss Balázs', img:'poster_f1.jpg' },
-    { id:'f2', name:'Laki Dion', img:'poster_f2.jpg' },
-    { id:'f3', name:'Arany János', img:'poster_f3.jpg' },
-    { id:'f4', name:'Marczali Johanna', img:'poster_f4.jpg' },
-    { id:'f5', name:'Marczali Léna', img:'poster_f5.jpg' },
-    { id:'f6', name:'Kiss Tamás', img:'poster_f6.jpg' },
-    { id:'f7', name:'Kele Páter', img:'poster_f7.jpg' },
-  ];
-  const Tisza = [
-    { id:'t1', name:'Búzás Benedek', img:'poster_t1.jpg' },
-    { id:'t2', name:'Ronald Marcell', img:'poster_t2.jpg' },
-  ];
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const ADMIN_EMAIL = "admin@bazsinia.com";
 
-  function cardHTML(c, party) {
-    const color = party === 'Fidesz' ? 'Fidesz' : 'Tisza';
-    const label = party === 'Fidesz' ? 'Fidesz' : 'Tisza';
-    const num   = c.id.replace(/\D/g,'');
-    return `
-      <div class="candidate-card ${color}-card" data-id="${c.id}" onclick="selectCandidate(this)">
-        <div class="poster-wrap">
-          <img src="${c.img}" alt="${c.name}"
-               onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-          <div class="poster-placeholder" style="display:none">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-            Poster
-          </div>
-        </div>
-        <div class="candidate-info">
-          <div class="cnum ${color}">${label} · No. ${num}</div>
-          <div class="cname">${c.name}</div>
-          <div class="cparty">${label}</div>
-        </div>
-      </div>`;
-  }
+const FIDESZ = [
+  {id:'f1', name:'Candidate Name', img:'poster_f1.jpg'},
+  {id:'f2', name:'Candidate Name', img:'poster_f2.jpg'},
+  {id:'f3', name:'Candidate Name', img:'poster_f3.jpg'},
+  {id:'f4', name:'Candidate Name', img:'poster_f4.jpg'},
+  {id:'f5', name:'Candidate Name', img:'poster_f5.jpg'},
+  {id:'f6', name:'Candidate Name', img:'poster_f6.jpg'},
+  {id:'f7', name:'Candidate Name', img:'poster_f7.jpg'},
+];
+const TISZA = [
+  {id:'t1', name:'Candidate Name', img:'poster_t1.jpg'},
+  {id:'t2', name:'Candidate Name', img:'poster_t2.jpg'},
+];
 
-  document.getElementById('Fidesz-grid').innerHTML = Fidesz.map(c => cardHTML(c,'Fidesz')).join('');
-  document.getElementById('Tisza-grid').innerHTML  = Tisza.map(c  => cardHTML(c,'Tisza')).join('');
+function cardHTML(c, party) {
+  const col = party === 'fidesz' ? 'fidesz' : 'tisza';
+  const lbl = party === 'fidesz' ? 'Fidesz' : 'Tisza';
+  const num = c.id.replace(/\D/g, '');
+  return `<div class="candidate-card ${col}-card" data-id="${c.id}" data-name="${c.name}" onclick="window._pick(this)">
+    <div class="poster-wrap">
+      <img src="${c.img}" alt="${c.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="poster-placeholder" style="display:none">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        Poster
+      </div>
+    </div>
+    <div class="candidate-info">
+      <div class="cnum ${col}">${lbl} · No.${num}</div>
+      <div class="cname">${c.name}</div>
+    </div>
+  </div>`;
+}
 
-  let selectedId=null, hasVoted=false, votingOpen=false;
+document.getElementById('fidesz-grid').innerHTML = FIDESZ.map(c => cardHTML(c,'fidesz')).join('');
+document.getElementById('tisza-grid').innerHTML  = TISZA.map(c  => cardHTML(c,'tisza')).join('');
 
-  function updateStatus() {
-    const n=new Date(), y=n.getFullYear(), mo=n.getMonth()+1, d=n.getDate();
-    const banner=document.getElementById('status-banner');
-    const st=document.getElementById('status-text');
-    const btn=document.getElementById('vote-btn');
-    const note=document.getElementById('vote-note');
-    const isDay=y===2026&&mo===5&&d===15;
-    const isPast=y>2026||(y===2026&&mo>5)||(y===2026&&mo===5&&d>15);
+let currentUser=null, hasVoted=false, selectedId=null, selectedName=null, votingState='auto';
 
-    if (hasVoted) {
-      votingOpen=false; banner.className='closed';
-      st.textContent='✅  You have already cast your vote. Thank you!';
-      btn.disabled=true; note.textContent='Your vote has been recorded.';
-    } else if (isDay) {
-      votingOpen=true; banner.className='open';
-      st.textContent='🗳️  Polls are OPEN — Today is Election Day!';
-      note.textContent=selectedId?'Click "Cast Your Vote" to confirm.':'Select a candidate to cast your vote.';
-      if(selectedId) btn.disabled=false;
-    } else if (isPast) {
-      votingOpen=false; banner.className='closed';
-      st.textContent='🏛️  The polls have closed. Results will be announced soon.';
-      btn.disabled=true; note.textContent='Voting has ended.';
-    } else {
-      votingOpen=false; banner.className='waiting';
-      const diff=new Date(2026,4,15)-new Date();
-      const dd=Math.floor(diff/86400000),hh=Math.floor((diff%86400000)/3600000),
-            mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
-      st.innerHTML=`⏳ Voting opens on <strong>15 May 2026</strong> &nbsp;—&nbsp; <strong>${dd}d ${hh}h ${mm}m ${ss}s</strong> remaining`;
-      btn.disabled=true; note.textContent='Voting is only available on May 15, 2026.';
-    }
-  }
+onSnapshot(doc(db,'config','voting'), snap => {
+  votingState = snap.exists() ? (snap.data().state || 'auto') : 'auto';
+  if (document.getElementById('voting-screen').style.display !== 'none') updateStatus();
+  if (document.getElementById('admin-screen').style.display === 'block') updateAdminBadge();
+});
 
-  function selectCandidate(card) {
-    if (!votingOpen) return;
-    document.querySelectorAll('.candidate-card').forEach(c=>c.classList.remove('selected'));
-    card.classList.add('selected');
-    selectedId=card.dataset.id;
-    document.getElementById('vote-btn').disabled=false;
-    document.getElementById('vote-note').textContent='Click "Cast Your Vote" to confirm your choice.';
-  }
-
-  function submitVote() {
-    if (!selectedId||!votingOpen) return;
-    const name=document.querySelector(`.candidate-card[data-id="${selectedId}"] .cname`).textContent;
-    hasVoted=true; votingOpen=false;
-    document.getElementById('modal-body').textContent=
-      `Your vote for ${name} has been recorded. Thank you for participating in the democratic future of the Republic of Bazsinia.`;
-    document.getElementById('modal-overlay').classList.add('show');
-    document.querySelectorAll('.candidate-card').forEach(c=>{
-      c.style.pointerEvents='none';
-      c.style.opacity=c.dataset.id===selectedId?'1':'0.4';
-    });
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    currentUser = user;
+    if (user.email === ADMIN_EMAIL) { showAdminScreen(); return; }
+    await loadVoterState(user);
+    document.getElementById('voting-screen').style.display = 'block';
+    document.getElementById('admin-screen').style.display = 'none';
+    hideAuthScreens();
+    document.getElementById('user-display').textContent = user.displayName || user.email.split('@')[0];
     updateStatus();
+    if (hasVoted && selectedId) markVoted(selectedId);
+  } else {
+    currentUser = null; hasVoted = false; selectedId = null;
+    document.getElementById('voting-screen').style.display = 'none';
+    document.getElementById('admin-screen').style.display = 'none';
+    showScreen('login-screen');
+  }
+});
+
+async function loadVoterState(user) {
+  const snap = await getDoc(doc(db,'voters',user.uid));
+  if (snap.exists()) { const d=snap.data(); hasVoted=d.voted||false; selectedId=d.votedFor||null; selectedName=d.votedForName||null; }
+  await setDoc(doc(db,'voters',user.uid), {
+    email:user.email, name:user.displayName||'', lastLogin:serverTimestamp(),
+    voted:hasVoted, votedFor:selectedId||null, votedForName:selectedName||null
+  }, {merge:true});
+}
+
+window.showScreen = function(id) {
+  ['login-screen','signup-screen'].forEach(s => document.getElementById(s).classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+};
+function hideAuthScreens() { ['login-screen','signup-screen'].forEach(s => document.getElementById(s).classList.remove('active')); }
+function showAdminScreen() {
+  document.getElementById('voting-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  hideAuthScreens();
+  loadAdminData();
+}
+
+window.doLogin = async function() {
+  const email = document.getElementById('li-email').value.trim();
+  const pass  = document.getElementById('li-pass').value;
+  const err   = document.getElementById('li-err');
+  const btn   = document.getElementById('li-btn');
+  err.textContent = '';
+  if (!email||!pass) { err.textContent='Please fill in all fields.'; return; }
+  btn.disabled=true; btn.textContent='Signing in…';
+  try { await signInWithEmailAndPassword(auth, email, pass); }
+  catch(e) {
+    err.textContent = e.code==='auth/invalid-credential' ? 'Wrong email or password.' : 'Error: '+e.message;
+    btn.disabled=false; btn.textContent='Sign In';
+  }
+};
+
+window.doSignup = async function() {
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const err   = document.getElementById('su-err');
+  const ok    = document.getElementById('su-ok');
+  const btn   = document.getElementById('su-btn');
+  err.textContent=''; ok.textContent='';
+  if (!name||!email||!pass) { err.textContent='Please fill in all fields.'; return; }
+  if (pass.length<6) { err.textContent='Password must be at least 6 characters.'; return; }
+  btn.disabled=true; btn.textContent='Creating account…';
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    await updateProfile(cred.user, {displayName: name});
+    await setDoc(doc(db,'voters',cred.user.uid), {
+      email, name, lastLogin:serverTimestamp(), voted:false, votedFor:null, votedForName:null
+    });
+    ok.textContent='Account created! Signing you in…';
+  } catch(e) {
+    err.textContent = e.code==='auth/email-already-in-use' ? 'Email already registered. Please sign in.' : 'Error: '+e.message;
+    btn.disabled=false; btn.textContent='Create Account';
+  }
+};
+
+window.doLogout = async function() {
+  await signOut(auth);
+  document.getElementById('li-btn').disabled=false;
+  document.getElementById('li-btn').textContent='Sign In';
+  document.getElementById('li-err').textContent='';
+};
+
+function isElectionDay() { const n=new Date(); return n.getFullYear()===2026&&n.getMonth()===4&&n.getDate()===15; }
+function isPastElection() { return new Date() > new Date(2026,4,15,23,59,59); }
+
+function updateStatus() {
+  const banner=document.getElementById('status-banner');
+  const st=document.getElementById('status-text');
+  const btn=document.getElementById('vote-btn');
+  const note=document.getElementById('vote-note');
+  if (hasVoted) {
+    banner.className='closed';
+    st.textContent='✅ You have already cast your vote. Thank you!';
+    btn.disabled=true; note.textContent='Your vote has been recorded.'; return;
+  }
+  if (votingState==='open') {
+    banner.className='open'; st.textContent='🗳️ Polls are OPEN — Cast your vote below!';
+    note.textContent=selectedId?'Click "Cast Your Vote" to confirm.':'Select a candidate to cast your vote.';
+    btn.disabled=!selectedId; return;
+  }
+  if (votingState==='delayed') {
+    banner.className='delayed'; st.textContent='⏸ Voting has been temporarily delayed by the Electoral Commission.';
+    btn.disabled=true; note.textContent='Please wait for voting to resume.'; return;
+  }
+  if (votingState==='closed') {
+    banner.className='closed'; st.textContent='🏛️ The polls have been closed by the Electoral Commission.';
+    btn.disabled=true; note.textContent='Voting has ended.'; return;
   }
 
-  function closeModal(){document.getElementById('modal-overlay').classList.remove('show')}
-  document.getElementById('modal-overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal()});
+  if (isElectionDay()) {
+    banner.className='open'; st.textContent='🗳️ Polls are OPEN — Today is Election Day!';
+    note.textContent=selectedId?'Click "Cast Your Vote" to confirm.':'Select a candidate to cast your vote.';
+    btn.disabled=!selectedId;
+  } else if (isPastElection()) {
+    banner.className='closed'; st.textContent='🏛️ The polls have closed. Results will be announced soon.';
+    btn.disabled=true; note.textContent='Voting has ended.';
+  } else {
+    banner.className='waiting';
+    const diff=new Date(2026,4,15)-new Date();
+    const dd=Math.floor(diff/86400000), hh=Math.floor((diff%86400000)/3600000),
+          mm=Math.floor((diff%3600000)/60000), ss=Math.floor((diff%60000)/1000);
+    st.innerHTML=`⏳ Voting opens on <strong>15 May 2026</strong> — <strong>${dd}d ${hh}h ${mm}m ${ss}s</strong> remaining`;
+    btn.disabled=true; note.textContent='Voting is only available on May 15, 2026.';
+  }
+}
+setInterval(() => { if (document.getElementById('voting-screen').style.display!=='none') updateStatus(); }, 1000);
+  
+window._pick = function(card) {
+  const open = votingState==='open' || (votingState==='auto' && isElectionDay() && !isPastElection());
+  if (!open||hasVoted) return;
+  document.querySelectorAll('.candidate-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedId=card.dataset.id; selectedName=card.dataset.name;
+  document.getElementById('vote-btn').disabled=false;
+  document.getElementById('vote-note').textContent='Click "Cast Your Vote" to confirm your choice.';
+};
 
-  updateStatus();
-  setInterval(updateStatus,1000);
+window.submitVote = async function() {
+  const open = votingState==='open' || (votingState==='auto' && isElectionDay() && !isPastElection());
+  if (!selectedId||!open||!currentUser) return;
+  try {
+    await updateDoc(doc(db,'voters',currentUser.uid), {
+      voted:true, votedFor:selectedId, votedForName:selectedName, votedAt:serverTimestamp()
+    });
+    hasVoted=true;
+    markVoted(selectedId);
+    document.getElementById('m-body').textContent=`Your vote for ${selectedName} has been recorded. Thank you for participating in the democratic future of the Republic of Bazsinia.`;
+    document.getElementById('modal-overlay').classList.add('show');
+    updateStatus();
+  } catch(e) { alert('Error saving vote: '+e.message); }
+};
+
+function markVoted(id) {
+  document.querySelectorAll('.candidate-card').forEach(c => {
+    c.style.pointerEvents='none';
+    if (c.dataset.id===id) c.classList.add('selected'); else c.classList.add('dim');
+  });
+}
+
+window.closeModal = function() { document.getElementById('modal-overlay').classList.remove('show'); };
+document.getElementById('modal-overlay').addEventListener('click', e => { if (e.target===e.currentTarget) window.closeModal(); });
+
+['li-email','li-pass'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') window.doLogin(); }));
+['su-name','su-email','su-pass'].forEach(id => document.getElementById(id).addEventListener('keydown', e => { if(e.key==='Enter') window.doSignup(); }));
+
+window.setVotingState = async function(state) {
+  try { await setDoc(doc(db,'config','voting'), {state}, {merge:true}); }
+  catch(e) { alert('Error: '+e.message); }
+};
+
+function updateAdminBadge() {
+  const map = {
+    open:    ['vsb-open',    '🟢 Voting is OPEN'],
+    closed:  ['vsb-closed',  '🔴 Voting is CLOSED'],
+    delayed: ['vsb-delayed', '🟡 Voting is DELAYED'],
+    auto:    ['vsb-closed',  '⚙️ Auto (date-controlled)']
+  };
+  const [cls,label] = map[votingState]||map.auto;
+  document.getElementById('vsb-wrap').innerHTML=`<div class="voting-status-badge ${cls}">${label}</div>`;
+}
+
+window.loadAdminData = async function() {
+  updateAdminBadge();
+  const tbody = document.getElementById('admin-tbody');
+  tbody.innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Loading…</td></tr>';
+  try {
+    const snap = await getDocs(collection(db,'voters'));
+    const rows = [];
+    snap.forEach(d => rows.push({id:d.id,...d.data()}));
+    rows.sort((a,b) => (b.lastLogin?.seconds||0)-(a.lastLogin?.seconds||0));
+    const total=rows.length, voted=rows.filter(r=>r.voted).length;
+    const fideszV=rows.filter(r=>r.votedFor?.startsWith('f')).length;
+    const tiszaV=rows.filter(r=>r.votedFor?.startsWith('t')).length;
+    document.getElementById('s-total').textContent=total;
+    document.getElementById('s-voted').textContent=voted;
+    document.getElementById('s-pending').textContent=total-voted;
+    document.getElementById('s-fidesz').textContent=fideszV;
+    document.getElementById('s-tisza').textContent=tiszaV;
+    if (!rows.length) { tbody.innerHTML='<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No voters yet.</td></tr>'; return; }
+    tbody.innerHTML = rows.map(r => {
+      const login = r.lastLogin?.seconds ? new Date(r.lastLogin.seconds*1000).toLocaleString('hu-HU') : '—';
+      const party = r.votedFor ? (r.votedFor.startsWith('f')?'f':'t') : null;
+      const pill  = r.votedForName ? `<span class="pill pill-${party}">${r.votedForName}</span>` : `<span class="pill-none">—</span>`;
+      return `<tr>
+        <td>${r.name||'—'}</td>
+        <td style="color:var(--muted);font-size:.82rem">${r.email||'—'}</td>
+        <td style="color:var(--muted);font-size:.82rem">${login}</td>
+        <td>${r.voted?'<span class="tag-yes">✓ Yes</span>':'<span class="tag-no">No</span>'}</td>
+        <td>${pill}</td>
+      </tr>`;
+    }).join('');
+  } catch(e) {
+    tbody.innerHTML=`<tr><td colspan="5" style="color:#C07070;text-align:center;padding:20px">${e.message}</td></tr>`;
+  }
+};
 </script>
 </body>
 </html>
