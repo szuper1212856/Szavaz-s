@@ -9,8 +9,8 @@
     :root {
       --gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;
       --border:#2A2A2A;--text:#F0EDE6;--muted:#888880;
-      --fajez:#FF7A00;--fajez-dim:rgba(255,122,0,0.12);
-      --Duna:#3A8FE8;--Duna-dim:rgba(58,143,232,0.12);
+      --Fidesz:#FF7A00;--Fidesz-dim:rgba(255,122,0,0.12);
+      --Tisza:#3A8FE8;--Tisza-dim:rgba(58,143,232,0.12);
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html{scroll-behavior:smooth}
@@ -39,14 +39,14 @@
     .party-section{margin-bottom:64px}
     .party-header{display:flex;align-items:center;gap:16px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border);position:relative}
     .party-header::after{content:'';position:absolute;bottom:-1px;left:0;width:80px;height:2px}
-    .party-header.fajez::after{background:var(--fajez)}
-    .party-header.Duna::after{background:var(--Duna)}
+    .party-header.Fidesz::after{background:var(--Fidesz)}
+    .party-header.Tisza::after{background:var(--Tisza)}
     .party-badge{padding:4px 14px;border-radius:2px;font-size:.75rem;font-family:'EB Garamond',serif;letter-spacing:.15em;text-transform:uppercase;font-weight:600}
-    .party-badge.fajez{background:var(--fajez-dim);color:var(--fajez);border:1px solid rgba(255,122,0,.35)}
-    .party-badge.Duna{background:var(--Duna-dim);color:var(--Duna);border:1px solid rgba(58,143,232,.35)}
+    .party-badge.Fidesz{background:var(--Fidesz-dim);color:var(--Fidesz);border:1px solid rgba(255,122,0,.35)}
+    .party-badge.Tisza{background:var(--Tisza-dim);color:var(--Tisza);border:1px solid rgba(58,143,232,.35)}
     .party-name{font-family:'Playfair Display',serif;font-size:1.6rem;font-weight:700}
-    .party-name.fajez{color:var(--fajez)}
-    .party-name.Duna{color:var(--Duna)}
+    .party-name.Fidesz{color:var(--Fidesz)}
+    .party-name.Tisza{color:var(--Tisza)}
     .party-count{font-style:italic;color:var(--muted);font-size:.95rem;margin-left:auto}
 
     .candidates{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px}
@@ -54,10 +54,10 @@
 
     .candidate-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:transform .25s,border-color .25s,box-shadow .25s;cursor:pointer;position:relative}
     .candidate-card:hover{transform:translateY(-4px)}
-    .fajez-card:hover{border-color:var(--fajez)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(255,122,0,.12)}
-    .Duna-card:hover{border-color:var(--Duna)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(58,143,232,.12)}
-    .candidate-card.selected.fajez-card{border-color:var(--fajez);box-shadow:0 0 0 2px var(--fajez),0 12px 40px rgba(255,122,0,.2)}
-    .candidate-card.selected.Duna-card{border-color:var(--Duna);box-shadow:0 0 0 2px var(--Duna),0 12px 40px rgba(58,143,232,.2)}
+    .Fidesz-card:hover{border-color:var(--Fidesz)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(255,122,0,.12)}
+    .Tisza-card:hover{border-color:var(--Tisza)!important;box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 18px rgba(58,143,232,.12)}
+    .candidate-card.selected.Fidesz-card{border-color:var(--Fidesz);box-shadow:0 0 0 2px var(--Fidesz),0 12px 40px rgba(255,122,0,.2)}
+    .candidate-card.selected.Tisza-card{border-color:var(--Tisza);box-shadow:0 0 0 2px var(--Tisza),0 12px 40px rgba(58,143,232,.2)}
     .candidate-card.selected::after{content:'✓ SELECTED';position:absolute;top:10px;right:10px;background:var(--gold);color:#000;font-size:.6rem;font-weight:600;letter-spacing:.12em;padding:3px 7px;border-radius:2px}
 
     .poster-wrap{width:100%;aspect-ratio:3/4;background:#1a1a1a;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative}
@@ -67,7 +67,7 @@
 
     .candidate-info{padding:14px 16px 16px;border-top:1px solid var(--border)}
     .cnum{font-size:.67rem;letter-spacing:.2em;text-transform:uppercase;margin-bottom:3px}
-    .cnum.fajez{color:var(--fajez)}.cnum.Duna{color:var(--Duna)}
+    .cnum.Fidesz{color:var(--Fidesz)}.cnum.Tisza{color:var(--Tisza)}
     .cname{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;line-height:1.2;margin-bottom:3px}
     .cparty{font-style:italic;color:var(--muted);font-size:.85rem}
 
@@ -112,26 +112,26 @@
   <p class="section-label">— Cast Your Vote for the Next President —</p>
   <div class="ornament">✦ &nbsp; ✦ &nbsp; ✦</div>
 
-  <!-- fajez (lena) -->
+  <!-- Fidesz (lena) -->
   <div class="party-section fade-up">
-    <div class="party-header fajez">
-      <span class="party-badge fajez">Party</span>
-      <span class="party-name fajez">fajez</span>
+    <div class="party-header Fidesz">
+      <span class="party-badge Fidesz">Party</span>
+      <span class="party-name Fidesz">Fidesz</span>
       <span class="party-count">6 candidates</span>
     </div>
-    <div class="candidates" id="fajez-grid"></div>
+    <div class="candidates" id="Fidesz-grid"></div>
   </div>
 
   <hr class="divider">
 
-  <!-- Duna (benedek párt)-->
+  <!-- Tisza (benedek párt)-->
   <div class="party-section fade-up">
-    <div class="party-header Duna">
-      <span class="party-badge Duna">Party</span>
-      <span class="party-name Duna">Duna</span>
+    <div class="party-header Tisza">
+      <span class="party-badge Tisza">Party</span>
+      <span class="party-name Tisza">Tisza</span>
       <span class="party-count">1 candidate</span>
     </div>
-    <div class="candidates single" id="Duna-grid"></div>
+    <div class="candidates single" id="Tisza-grid"></div>
   </div>
 
   <div class="vote-section">
@@ -156,7 +156,7 @@
 
 <script>
   // ── CANDIDATE DATA
-  const fajez = [
+  const Fidesz = [
     { id:'f1', name:'Kiss Balázs', img:'poster_f1.jpg' },
     { id:'f2', name:'Laki Dion', img:'poster_f2.jpg' },
     { id:'f3', name:'Arany János', img:'poster_f3.jpg' },
@@ -164,13 +164,13 @@
     { id:'f5', name:'Marczali Léna', img:'poster_f5.jpg' },
     { id:'f6', name:'Kiss Tamás', img:'poster_f6.jpg' },
   ];
-  const Duna = [
+  const Tisza = [
     { id:'t1', name:'Búzás Benedek', img:'poster_t1.jpg' },
   ];
 
   function cardHTML(c, party) {
-    const color = party === 'fajez' ? 'fajez' : 'Duna';
-    const label = party === 'fajez' ? 'fajez' : 'Duna';
+    const color = party === 'Fidesz' ? 'Fidesz' : 'Tisza';
+    const label = party === 'Fidesz' ? 'Fidesz' : 'Tisza';
     const num   = c.id.replace(/\D/g,'');
     return `
       <div class="candidate-card ${color}-card" data-id="${c.id}" onclick="selectCandidate(this)">
@@ -190,8 +190,8 @@
       </div>`;
   }
 
-  document.getElementById('fajez-grid').innerHTML = fajez.map(c => cardHTML(c,'fajez')).join('');
-  document.getElementById('Duna-grid').innerHTML  = Duna.map(c  => cardHTML(c,'Duna')).join('');
+  document.getElementById('Fidesz-grid').innerHTML = Fidesz.map(c => cardHTML(c,'Fidesz')).join('');
+  document.getElementById('Tisza-grid').innerHTML  = Tisza.map(c  => cardHTML(c,'Tisza')).join('');
 
   let selectedId=null, hasVoted=false, votingOpen=false;
 
