@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — Republic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+header{position:relative;text-align:center;padding:50px 20px 36px;border-bottom:1px solid var(--border)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:64px;height:64px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:28px;margin-bottom:14px;animation:sg 3s ease-in-out infinite alternate}
+@keyframes sg{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,4rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hsub{margin-top:8px;font-style:italic;font-size:1rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+main{max-width:900px;margin:0 auto;padding:50px 20px 70px}
+.section{margin-bottom:60px}
+.stl{font-family:'Playfair Display',serif;font-size:1.4rem;color:var(--gold-light);margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.pres-card{background:var(--panel);border:1px solid var(--gold);border-radius:4px;padding:28px 32px;display:flex;align-items:center;gap:24px;box-shadow:0 0 30px rgba(201,168,76,.08)}
+.pres-crown{font-size:44px}
+.pres-name{font-family:'Playfair Display',serif;font-size:1.8rem;color:var(--gold-light)}
+.pres-month{color:var(--muted);font-style:italic;font-size:.95rem;margin-top:4px}
+.pres-votes{color:var(--gold);font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;margin-top:6px}
+.empty{color:var(--muted);font-style:italic;font-size:.92rem;padding:16px 0}
+.item-grid{display:grid;gap:16px}
+.item{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 22px}
+.item-header{margin-bottom:10px}
+.badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.badge.law{background:rgba(42,92,63,.2);color:#7BC49A;border:1px solid #2A5C3F}
+.badge.speech{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.badge.doc{background:rgba(58,143,232,.1);color:#3A8FE8;border:1px solid rgba(58,143,232,.3)}
+.badge.video{background:rgba(139,26,26,.15);color:#C07070;border:1px solid #8B1A1A}
+.item-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light)}
+.item-meta{font-size:.78rem;color:var(--muted);font-style:italic;margin-top:2px}
+.item-body{font-size:.92rem;line-height:1.65;color:var(--text);white-space:pre-wrap;margin-top:10px}
+.item-link{color:var(--gold);font-size:.85rem;text-decoration:none;display:inline-block;margin-top:8px}
+.item-link:hover{text-decoration:underline}
+.reactions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap;align-items:center}
+.react-btn{padding:5px 12px;background:#111;border:1px solid var(--border);color:var(--text);font-size:.85rem;cursor:pointer;border-radius:20px;transition:border-color .2s,background .2s}
+.react-btn:hover{border-color:var(--gold);background:#1a1500}
+.react-btn.reacted{border-color:var(--gold);background:rgba(201,168,76,.12);color:var(--gold-light)}
+.comment-section{margin-top:16px;border-top:1px solid var(--border);padding-top:14px}
+.comment-toggle{background:transparent;border:none;color:var(--muted);font-family:'EB Garamond',serif;font-size:.85rem;cursor:pointer;letter-spacing:.05em;padding:0}
+.comment-toggle:hover{color:var(--gold)}
+.comments-wrap{display:none;margin-top:12px}
+.comments-wrap.open{display:block}
+.comment{padding:10px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.comment:last-child{border-bottom:none}
+.comment-author{font-size:.75rem;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px}
+.comment-text{font-size:.88rem;line-height:1.5}
+.comment-input-wrap{display:flex;gap:8px;margin-top:12px}
+.comment-input{flex:1;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.9rem;padding:8px 12px;border-radius:2px;outline:none;transition:border-color .2s}
+.comment-input:focus{border-color:var(--gold)}
+.comment-send{padding:8px 16px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.82rem;cursor:pointer;border-radius:2px;transition:background .2s,color .2s;white-space:nowrap}
+.comment-send:hover{background:var(--gold);color:#000}
+.hof-grid{display:grid;gap:12px}
+.hof-item{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px 20px;display:flex;align-items:center;gap:14px}
+.hof-crown{font-size:22px}
+.hof-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light)}
+.hof-month{font-size:.8rem;color:var(--muted);font-style:italic}
+.hof-votes{font-size:.75rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;margin-left:auto}
+.login-note{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px 18px;font-size:.88rem;color:var(--muted);font-style:italic;margin-top:10px}
+.login-note a{color:var(--gold);cursor:pointer}
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <a class="nlink" href="index.html">🗳 Vote</a>
+  </div>
+  <div class="seal">🦅</div>
+  <h1>Bazsinia</h1>
+  <p class="hsub">Republic — Official Public Portal</p>
+</header>
+
+<main>
+  <div class="section" id="pres-section">
+    <div class="stl">👑 Current President</div>
+    <div id="pres-wrap"><div class="empty">Loading…</div></div>
+  </div>
+
+  <div class="section">
+    <div class="stl">⚖️ Laws</div>
+    <div class="item-grid" id="laws-wrap"></div>
+  </div>
+
+  <div class="section">
+    <div class="stl">📜 Speeches</div>
+    <div class="item-grid" id="speeches-wrap"></div>
+  </div>
+
+  <div class="section">
+    <div class="stl">📄 Documents</div>
+    <div class="item-grid" id="docs-wrap"></div>
+  </div>
+
+  <div class="section">
+    <div class="stl">🎥 Video Addresses</div>
+    <div class="item-grid" id="videos-wrap"></div>
+  </div>
+
+  <div class="section">
+    <div class="stl">🏆 Hall of Fame</div>
+    <div class="hof-grid" id="hof-wrap"><div class="empty">Loading…</div></div>
+  </div>
+</main>
+
+<footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Public Portal</p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc, increment, query, orderBy, serverTimestamp, setDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const EMOJIS=['👍','❤️','🔥','👏','🤔'];
+let currentUser=null;
+
+onAuthStateChanged(auth,u=>{currentUser=u;loadAll();});
+
+function monthKey(){const n=new Date();return`${n.getFullYear()}-${n.getMonth()+1}`;}
+
+async function loadAll(){
+  loadPresident();
+  loadContent('laws','laws-wrap','law','Law');
+  loadContent('speeches','speeches-wrap','speech','Speech');
+  loadContent('docs','docs-wrap','doc','Document');
+  loadContent('videos','videos-wrap','video','Video');
+  loadHOF();
+}
+
+async function loadPresident(){
+  const wrap=document.getElementById('pres-wrap');
+  try{
+    const snap=await getDoc(doc(db,'presidents',monthKey()));
+    if(snap.exists()){
+      const p=snap.data();
+      wrap.innerHTML=`<div class="pres-card"><span class="pres-crown">👑</span><div><div class="pres-name">${p.name}</div><div class="pres-month">President for ${p.month}</div><div class="pres-votes">${p.votes} vote(s) received</div></div></div>`;
+    } else {
+      wrap.innerHTML='<div class="empty">No president declared yet this month. Check back after voting day!</div>';
+    }
+  }catch(e){wrap.innerHTML='<div class="empty">Unable to load.</div>';}
+}
+
+async function loadContent(type,wrapId,badge,label){
+  const wrap=document.getElementById(wrapId);
+  wrap.innerHTML='<div class="empty">Loading…</div>';
+  try{
+    const q=query(collection(db,'content',type,'items'),orderBy('createdAt','desc'));
+    const snap=await getDocs(q);
+    if(snap.empty){wrap.innerHTML=`<div class="empty">No ${type} posted yet.</div>`;return;}
+    const items=await Promise.all(snap.docs.map(async d=>{
+      const it=d.data();
+      const dt=it.createdAt?.seconds?new Date(it.createdAt.seconds*1000).toLocaleDateString('en-GB'):'—';
+      const reactionSnap=await getDocs(collection(db,'content',type,'items',d.id,'reactions'));
+      const reactionCounts={};
+      const userReactions=new Set();
+      reactionSnap.forEach(r=>{
+        const rd=r.data();
+        reactionCounts[rd.emoji]=(reactionCounts[rd.emoji]||0)+1;
+        if(currentUser&&rd.uid===currentUser.uid)userReactions.add(rd.emoji);
+      });
+      const commentSnap=await getDocs(query(collection(db,'content',type,'items',d.id,'comments'),orderBy('createdAt','asc')));
+      const comments=[];
+      commentSnap.forEach(c=>comments.push({id:c.id,...c.data()}));
+      let extra='';
+      if(type==='docs'&&it.link)extra=`<a class="item-link" href="${it.link}" target="_blank">Open Document ↗</a>`;
+      if(type==='videos'){
+        if(it.link&&(it.link.includes('youtube')||it.link.includes('youtu.be'))){
+          let vid='';
+          try{vid=it.link.includes('youtu.be')?it.link.split('/').pop().split('?')[0]:new URL(it.link).searchParams.get('v');}catch(_){}
+          if(vid)extra=`<iframe width="100%" style="max-width:480px;aspect-ratio:16/9;border:1px solid var(--border);border-radius:4px;margin-top:10px;display:block" src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;
+        } else if(it.link){
+          extra=`<video style="width:100%;max-width:480px;border-radius:4px;border:1px solid var(--border);margin-top:10px" controls src="${it.link}"></video>`;
+        }
+      }
+      const reactHTML=EMOJIS.map(e=>{
+        const cnt=reactionCounts[e]||0;
+        const reacted=userReactions.has(e);
+        return`<button class="react-btn${reacted?' reacted':''}" data-type="${type}" data-id="${d.id}" data-emoji="${e}" onclick="window.react(this)">${e}${cnt>0?' '+cnt:''}</button>`;
+      }).join('');
+      const commentsHTML=comments.map(c=>`<div class="comment"><div class="comment-author">${c.authorName||'Voter'}</div><div class="comment-text">${c.text}</div></div>`).join('')||'<div class="empty" style="font-size:.82rem">No comments yet.</div>';
+      const loginNote=currentUser?'':`<div class="login-note"><a href="index.html">Sign in</a> to react or comment.</div>`;
+      return`<div class="item">
+        <div class="item-header">
+          <span class="badge ${badge}">${label}</span>
+          <div class="item-title">${it.title}</div>
+          <div class="item-meta">${dt}</div>
+        </div>
+        ${it.body?`<div class="item-body">${it.body}</div>`:''}
+        ${extra}
+        <div class="reactions">${reactHTML}</div>
+        ${loginNote}
+        <div class="comment-section">
+          <button class="comment-toggle" onclick="this.nextElementSibling.classList.toggle('open')">💬 Comments (${comments.length})</button>
+          <div class="comments-wrap">
+            ${commentsHTML}
+            ${currentUser?`<div class="comment-input-wrap"><input class="comment-input" placeholder="Add a comment…" id="ci-${d.id}"/><button class="comment-send" onclick="window.addComment('${type}','${d.id}')">Send</button></div>`:''}
+          </div>
+        </div>
+      </div>`;
+    }));
+    wrap.innerHTML=items.join('');
+  }catch(e){wrap.innerHTML=`<div class="empty" style="color:#C07070">Error: ${e.message}</div>`;}
+}
+
+window.react=async function(btn){
+  if(!currentUser){alert('Please sign in to react.');return;}
+  const type=btn.dataset.type,id=btn.dataset.id,emoji=btn.dataset.emoji;
+  const rref=doc(db,'content',type,'items',id,'reactions',currentUser.uid+'_'+emoji);
+  const snap=await getDoc(rref);
+  if(snap.exists()){
+    await snap.ref.delete?.();
+  } else {
+    await setDoc(rref,{emoji,uid:currentUser.uid,createdAt:serverTimestamp()});
+  }
+  loadContent(type,type+'-wrap',type==='laws'?'law':type==='speeches'?'speech':type==='docs'?'doc':'video',type==='laws'?'Law':type==='speeches'?'Speech':type==='docs'?'Document':'Video');
+};
+
+window.addComment=async function(type,id){
+  if(!currentUser)return;
+  const inp=document.getElementById('ci-'+id);
+  const text=inp?.value.trim();
+  if(!text)return;
+  inp.value='';
+  await addDoc(collection(db,'content',type,'items',id,'comments'),{
+    text,authorName:currentUser.displayName||currentUser.email.split('@')[0],
+    uid:currentUser.uid,createdAt:serverTimestamp()
+  });
+  const label=type==='laws'?'law':type==='speeches'?'speech':type==='docs'?'doc':'video';
+  const labelStr=type==='laws'?'Law':type==='speeches'?'Speech':type==='docs'?'Document':'Video';
+  loadContent(type,type+'-wrap',label,labelStr);
+};
+
+async function loadHOF(){
+  const wrap=document.getElementById('hof-wrap');
+  try{
+    const snap=await getDocs(collection(db,'presidents'));
+    const all=[];
+    snap.forEach(d=>all.push({id:d.id,...d.data()}));
+    all.sort((a,b)=>(b.declaredAt?.seconds||0)-(a.declaredAt?.seconds||0));
+    if(!all.length){wrap.innerHTML='<div class="empty">No past presidents yet.</div>';return;}
+    wrap.innerHTML=all.map((p,i)=>`
+      <div class="hof-item">
+        <span class="hof-crown">${i===0?'👑':'🥈'}</span>
+        <div><div class="hof-name">${p.name}</div><div class="hof-month">${p.month}</div></div>
+        <span class="hof-votes">${p.votes} vote(s)</span>
+      </div>`).join('');
+  }catch(e){wrap.innerHTML='<div class="empty">Unable to load.</div>';}
+}
+</script>
+</body>
+</html>
