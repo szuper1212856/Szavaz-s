@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — President's Office</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+.auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.auth-screen.active{display:flex}
+.auth-box{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:44px 40px;width:100%;max-width:380px;text-align:center}
+.auth-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:4px}
+.auth-sub{font-style:italic;color:var(--muted);font-size:.88rem;margin-bottom:24px}
+.ig{margin-bottom:14px;text-align:left}
+.ig label{display:block;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.ig input{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:1rem;padding:10px 13px;border-radius:2px;outline:none;transition:border-color .2s}
+.ig input:focus{border-color:var(--gold)}
+.auth-btn{width:100%;margin-top:6px;padding:12px;font-family:'Playfair Display',serif;font-size:.9rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s}
+.auth-btn:hover:not(:disabled){background-position:100%}
+.auth-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.auth-error{margin-top:10px;color:#C07070;font-style:italic;font-size:.85rem;min-height:18px}
+header{position:relative;text-align:center;padding:40px 20px 28px;border-bottom:1px solid var(--border)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:100px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.htitle{font-family:'Playfair Display',serif;font-size:clamp(1.5rem,4vw,2.6rem);font-weight:900;letter-spacing:.05em;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hsub{font-style:italic;color:var(--muted);font-size:.9rem;margin-top:6px}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px;align-items:center}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+main{max-width:900px;margin:0 auto;padding:44px 20px 70px}
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:36px;flex-wrap:wrap}
+.tab{padding:10px 22px;font-family:'EB Garamond',serif;font-size:.85rem;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--gold-light);border-bottom-color:var(--gold)}
+.panel{display:none}
+.panel.active{display:block}
+.stl{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--gold-light);margin-bottom:20px}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.fg input,.fg textarea{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:1rem;padding:10px 13px;border-radius:2px;outline:none;transition:border-color .2s;resize:vertical}
+.fg input:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg textarea{min-height:120px}
+.hint{font-size:.78rem;color:var(--muted);font-style:italic;margin-top:5px}
+.sbtn{padding:10px 28px;font-family:'Playfair Display',serif;font-size:.88rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s}
+.sbtn:hover:not(:disabled){background-position:100%}
+.sbtn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.msg{margin-top:10px;font-style:italic;font-size:.87rem;min-height:18px}
+.msg.ok{color:#7BC49A}.msg.err{color:#C07070}
+.item-list{display:grid;gap:14px;margin-top:28px}
+.item{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:18px 20px}
+.item-hd{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:8px}
+.item-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold-light)}
+.item-meta{font-size:.78rem;color:var(--muted);font-style:italic;margin-top:2px}
+.item-body{font-size:.92rem;line-height:1.65;color:var(--text);white-space:pre-wrap;margin-top:8px}
+.item-link{color:var(--gold);font-size:.85rem;text-decoration:none;display:inline-block;margin-top:8px}
+.item-link:hover{text-decoration:underline}
+.badge{display:inline-block;padding:2px 8px;border-radius:2px;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
+.badge.law{background:rgba(42,92,63,.2);color:#7BC49A;border:1px solid #2A5C3F}
+.badge.speech{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.badge.doc{background:rgba(58,143,232,.1);color:#3A8FE8;border:1px solid rgba(58,143,232,.3)}
+.badge.video{background:rgba(139,26,26,.15);color:#C07070;border:1px solid #8B1A1A}
+.dbtn{padding:6px 14px;font-family:'EB Garamond',serif;font-size:.8rem;cursor:pointer;border-radius:2px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070;transition:background .2s;white-space:nowrap}
+.dbtn:hover{background:rgba(139,26,26,.4)}
+.empty{color:var(--muted);font-style:italic;font-size:.9rem;padding:16px 0}
+.vid-preview{width:100%;max-width:480px;aspect-ratio:16/9;border:1px solid var(--border);border-radius:4px;margin-top:10px;display:block}
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<div class="auth-screen active" id="login-wrap">
+  <div class="auth-box">
+    <div style="font-size:36px;margin-bottom:12px">🦅</div>
+    <div class="auth-title">President's Office</div>
+    <div class="auth-sub">Sign in with president@bazsinia.com</div>
+    <div class="ig"><label>Email</label><input type="email" id="pe" placeholder="president@bazsinia.com"/></div>
+    <div class="ig"><label>Password</label><input type="password" id="pp" placeholder="••••••••"/></div>
+    <button class="auth-btn" id="pb" onclick="pLogin()">Sign In</button>
+    <div class="auth-error" id="perr"></div>
+  </div>
+</div>
+
+<div id="office-wrap" style="display:none">
+  <header>
+    <div class="flag-stripe"></div>
+    <div class="ubar">
+      <a class="nlink" href="public.html">🏛 Public Page</a>
+      <button class="nlink" onclick="pLogout()">Logout</button>
+    </div>
+    <div class="htitle">🦅 President's Office</div>
+    <div class="hsub">Bazsinia — Official Presidential Dashboard</div>
+  </header>
+
+  <main>
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(event,'laws')">⚖️ Laws</button>
+      <button class="tab" onclick="switchTab(event,'speeches')">📜 Speeches</button>
+      <button class="tab" onclick="switchTab(event,'docs')">📄 Documents</button>
+      <button class="tab" onclick="switchTab(event,'videos')">🎥 Videos</button>
+    </div>
+
+    <div class="panel active" id="tab-laws">
+      <div class="stl">Propose a New Law</div>
+      <div class="fg"><label>Law Title</label><input type="text" id="law-title" placeholder="e.g. The Clean Water Act"/></div>
+      <div class="fg"><label>Description</label><textarea id="law-body" placeholder="Describe what this law does and why it matters…"></textarea></div>
+      <button class="sbtn" onclick="postItem('laws')">Publish Law</button>
+      <div class="msg" id="laws-msg"></div>
+      <div class="item-list" id="laws-list"></div>
+    </div>
+
+    <div class="panel" id="tab-speeches">
+      <div class="stl">Post a Speech</div>
+      <div class="fg"><label>Speech Title</label><input type="text" id="speech-title" placeholder="e.g. Inaugural Address"/></div>
+      <div class="fg"><label>Speech Text</label><textarea id="speech-body" placeholder="Write your speech here…" style="min-height:180px"></textarea></div>
+      <button class="sbtn" onclick="postItem('speeches')">Publish Speech</button>
+      <div class="msg" id="speeches-msg"></div>
+      <div class="item-list" id="speeches-list"></div>
+    </div>
+
+    <div class="panel" id="tab-docs">
+      <div class="stl">Share a Document</div>
+      <div class="fg"><label>Document Title</label><input type="text" id="doc-title" placeholder="e.g. National Budget 2026"/></div>
+      <div class="fg"><label>Google Docs / Drive Link</label><input type="url" id="doc-link" placeholder="https://docs.google.com/…"/></div>
+      <div class="fg"><label>Description (optional)</label><textarea id="doc-body" placeholder="Brief description…" style="min-height:80px"></textarea></div>
+      <button class="sbtn" onclick="postItem('docs')">Share Document</button>
+      <div class="msg" id="docs-msg"></div>
+      <div class="item-list" id="docs-list"></div>
+    </div>
+
+    <div class="panel" id="tab-videos">
+      <div class="stl">Share a Video Address</div>
+      <div class="fg">
+        <label>YouTube Link</label>
+        <input type="url" id="vid-link" placeholder="https://youtube.com/watch?v=…"/>
+        <div class="hint">Upload your video to YouTube (can be unlisted) and paste the link here.</div>
+      </div>
+      <div class="fg"><label>Video Title</label><input type="text" id="vid-title" placeholder="e.g. Monthly Address — June 2026"/></div>
+      <div class="fg"><label>Description (optional)</label><textarea id="vid-body" placeholder="What is this video about?" style="min-height:80px"></textarea></div>
+      <button class="sbtn" onclick="postItem('videos')">Publish Video</button>
+      <div class="msg" id="videos-msg"></div>
+      <div class="item-list" id="videos-list"></div>
+    </div>
+  </main>
+  <footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; President's Office</p></footer>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, serverTimestamp, query, orderBy }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+const PRESIDENT_EMAIL = "president@bazsinia.com";
+
+onAuthStateChanged(auth, user => {
+  if (user && user.email === PRESIDENT_EMAIL) {
+    document.getElementById('login-wrap').style.display = 'none';
+    document.getElementById('office-wrap').style.display = 'block';
+    loadAll();
+  } else if (user && user.email !== PRESIDENT_EMAIL) {
+    signOut(auth);
+    document.getElementById('perr').textContent = 'Access denied. Use president@bazsinia.com.';
+  } else {
+    document.getElementById('login-wrap').style.display = 'flex';
+    document.getElementById('login-wrap').classList.add('active');
+    document.getElementById('office-wrap').style.display = 'none';
+  }
+});
+
+window.pLogin = async function() {
+  const e = document.getElementById('pe').value.trim();
+  const p = document.getElementById('pp').value;
+  const err = document.getElementById('perr');
+  const btn = document.getElementById('pb');
+  err.textContent = '';
+  if (!e || !p) { err.textContent = 'Please fill in all fields.'; return; }
+  btn.disabled = true; btn.textContent = 'Signing in…';
+  try { await signInWithEmailAndPassword(auth, e, p); }
+  catch(ex) { err.textContent = 'Wrong email or password.'; btn.disabled = false; btn.textContent = 'Sign In'; }
+};
+
+window.pLogout = async function() { await signOut(auth); };
+
+window.switchTab = function(e, name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+};
+
+const TYPES = {
+  laws:     { titleId:'law-title',    bodyId:'law-body',    linkId:null,       msgId:'laws-msg',     listId:'laws-list',     badge:'law',    label:'Law' },
+  speeches: { titleId:'speech-title', bodyId:'speech-body', linkId:null,       msgId:'speeches-msg', listId:'speeches-list', badge:'speech', label:'Speech' },
+  docs:     { titleId:'doc-title',    bodyId:'doc-body',    linkId:'doc-link', msgId:'docs-msg',     listId:'docs-list',     badge:'doc',    label:'Document' },
+  videos:   { titleId:'vid-title',    bodyId:'vid-body',    linkId:'vid-link', msgId:'videos-msg',   listId:'videos-list',   badge:'video',  label:'Video' },
+};
+
+window.postItem = async function(type) {
+  const cfg = TYPES[type];
+  const title = document.getElementById(cfg.titleId).value.trim();
+  const body  = document.getElementById(cfg.bodyId).value.trim();
+  const link  = cfg.linkId ? document.getElementById(cfg.linkId).value.trim() : '';
+  const msg   = document.getElementById(cfg.msgId);
+  if (!title) { msg.textContent = 'Please enter a title.'; msg.className = 'msg err'; return; }
+  if (type === 'videos' && !link) { msg.textContent = 'Please paste a YouTube link.'; msg.className = 'msg err'; return; }
+  msg.textContent = 'Publishing…'; msg.className = 'msg';
+  try {
+    await addDoc(collection(db, 'content', type, 'items'), {
+      title, body, link: link || '', createdAt: serverTimestamp(), type
+    });
+    msg.textContent = cfg.label + ' published!'; msg.className = 'msg ok';
+    document.getElementById(cfg.titleId).value = '';
+    document.getElementById(cfg.bodyId).value = '';
+    if (cfg.linkId) document.getElementById(cfg.linkId).value = '';
+    loadList(type);
+  } catch(e) { msg.textContent = 'Error: ' + e.message; msg.className = 'msg err'; }
+};
+
+async function loadList(type) {
+  const cfg = TYPES[type];
+  const el  = document.getElementById(cfg.listId);
+  el.innerHTML = '<div class="empty">Loading…</div>';
+  try {
+    const q    = query(collection(db, 'content', type, 'items'), orderBy('createdAt', 'desc'));
+    const snap = await getDocs(q);
+    if (snap.empty) { el.innerHTML = `<div class="empty">No ${type} posted yet.</div>`; return; }
+    el.innerHTML = snap.docs.map(d => {
+      const it = d.data();
+      const dt = it.createdAt?.seconds ? new Date(it.createdAt.seconds * 1000).toLocaleDateString('en-GB') : '—';
+      let extra = '';
+      if (type === 'docs' && it.link) {
+        extra = `<a class="item-link" href="${it.link}" target="_blank">Open Document ↗</a>`;
+      }
+      if (type === 'videos' && it.link) {
+        let vid = '';
+        try { vid = it.link.includes('youtu.be') ? it.link.split('/').pop().split('?')[0] : new URL(it.link).searchParams.get('v'); } catch(_) {}
+        if (vid) extra = `<iframe class="vid-preview" src="https://www.youtube.com/embed/${vid}" frameborder="0" allowfullscreen></iframe>`;
+        else extra = `<a class="item-link" href="${it.link}" target="_blank">Watch Video ↗</a>`;
+      }
+      return `<div class="item">
+        <div class="item-hd">
+          <div>
+            <div class="badge ${cfg.badge}">${cfg.label}</div>
+            <div class="item-title">${it.title}</div>
+            <div class="item-meta">${dt}</div>
+          </div>
+          <button class="dbtn" onclick="window.delItem('${type}','${d.id}')">Delete</button>
+        </div>
+        ${it.body ? `<div class="item-body">${it.body}</div>` : ''}
+        ${extra}
+      </div>`;
+    }).join('');
+  } catch(e) { el.innerHTML = `<div class="empty" style="color:#C07070">Error: ${e.message}</div>`; }
+}
+
+window.delItem = async function(type, id) {
+  if (!confirm('Delete this item?')) return;
+  await deleteDoc(doc(db, 'content', type, 'items', id));
+  loadList(type);
+};
+
+function loadAll() { ['laws','speeches','docs','videos'].forEach(loadList); }
+
+document.getElementById('pe').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('pp').focus(); });
+document.getElementById('pp').addEventListener('keydown', e => { if (e.key === 'Enter') window.pLogin(); });
+</script>
+</body>
+</html>
