@@ -7,6 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--fidesz:#FF7A00;--fidesz-dim:rgba(255,122,0,0.12);--tisza:#3A8FE8;--tisza-dim:rgba(58,143,232,0.12)}
+#hijack-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(6px)}
+#hijack-box{background:#1a0000;border:2px solid #8B1A1A;border-radius:4px;max-width:520px;width:100%;padding:44px 40px;text-align:center;box-shadow:0 0 60px rgba(139,26,26,.5),0 0 120px rgba(139,26,26,.2);animation:hkIn .4s cubic-bezier(.22,.61,.36,1)}
+@keyframes hkIn{from{opacity:0;transform:scale(.9) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+#hijack-box .hk-icon{font-size:48px;margin-bottom:16px;animation:hkPulse 1.5s ease-in-out infinite alternate}
+@keyframes hkPulse{from{transform:scale(1)}to{transform:scale(1.08)}}
+#hijack-box h2{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;color:#FF4444;margin-bottom:14px;letter-spacing:.04em}
+#hijack-box p{color:#DDAAAA;font-family:'EB Garamond',serif;font-size:1rem;line-height:1.7;font-style:italic}
+#hijack-box .hk-divider{width:60px;height:2px;background:linear-gradient(90deg,transparent,#8B1A1A,transparent);margin:20px auto}
+#hijack-box .hk-status{display:inline-flex;align-items:center;gap:8px;margin-top:18px;padding:7px 18px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;border-radius:2px;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:#C07070}
+#hijack-box .hk-dot{width:8px;height:8px;border-radius:50%;background:#FF4444;animation:hkDot 1s ease-in-out infinite alternate}
+@keyframes hkDot{from{opacity:1}to{opacity:.3}}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
 .auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px}
@@ -144,7 +155,7 @@ footer span{color:var(--gold)}
 </head>
 <body>
 
-<div class="auth-screen active" id="login-screen">
+<div id="hijack-overlay"><div id="hijack-box"><div class="hk-icon">🚨</div><h2>Vote Hijacked</h2><div class="hk-divider"></div><p>We regret to inform you that the integrity of this vote has been compromised. All votes have been disabled and the current results are void.</p><p style="margin-top:12px">We apologize for the inconvenience and are working to fix this issue as soon as possible.</p><div class="hk-status"><span class="hk-dot"></span> Actively working on a fix</div></div></div><div class="auth-screen active" id="login-screen">
   <div class="auth-box">
     <span class="auth-seal">🦅</span>
     <div class="auth-title">Bazsinia</div>
@@ -263,10 +274,10 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp, onSnapshot }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const EMAILJS_SERVICE  = "service_s3gomqv";
-const EMAILJS_TEMPLATE = "nx8bnif";
-const EMAILJS_KEY      = " Us9lKbx5Dq5HHur4c";
-const WINNER_EMAIL = "bazsiniapresidential@gmail.com";
+const EMAILJS_SERVICE  = "YOUR_SERVICE_ID";
+const EMAILJS_TEMPLATE = "YOUR_TEMPLATE_ID";
+const EMAILJS_KEY      = "YOUR_PUBLIC_KEY";
+const WINNER_EMAIL     = "president@bazsinia.com";
 
 emailjs.init(EMAILJS_KEY);
 
@@ -286,17 +297,17 @@ const PRESIDENT_EMAIL = "president@bazsinia.com";
 
 const CANDIDATES = {
   fidesz:[
-    {id:'f1',name:'Kiss Balázs',img:'poster_f1.jpg'},
-    {id:'f2',name:'Laki Dion',img:'poster_f2.jpg'},
-    {id:'f3',name:'Arany János',img:'poster_f3.jpg'},
-    {id:'f4',name:'Marczali Johanna',img:'poster_f4.jpg'},
-    {id:'f5',name:'Marczali Léna',img:'poster_f5.jpg'},
-    {id:'f6',name:'Kiss Tamás',img:'poster_f6.jpg'},
-    {id:'f7',name:'Kele Páter',img:'poster_f7.jpg'},
+    {id:'f1',name:'Candidate Name',img:'poster_f1.jpg'},
+    {id:'f2',name:'Candidate Name',img:'poster_f2.jpg'},
+    {id:'f3',name:'Candidate Name',img:'poster_f3.jpg'},
+    {id:'f4',name:'Candidate Name',img:'poster_f4.jpg'},
+    {id:'f5',name:'Candidate Name',img:'poster_f5.jpg'},
+    {id:'f6',name:'Candidate Name',img:'poster_f6.jpg'},
+    {id:'f7',name:'Candidate Name',img:'poster_f7.jpg'},
   ],
   tisza:[
-    {id:'t1',name:'Búzás Benedek',img:'poster_t1.jpg'},
-    {id:'t2',name:'Ronald Marcell',img:'poster_t2.jpg'},
+    {id:'t1',name:'Candidate Name',img:'poster_t1.jpg'},
+    {id:'t2',name:'Candidate Name',img:'poster_t2.jpg'},
   ]
 };
 const ALL = [...CANDIDATES.fidesz,...CANDIDATES.tisza];
