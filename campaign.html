@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — Campaigns</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--fidesz:#FF7A00;--fidesz-dim:rgba(255,122,0,0.12);--tisza:#3A8FE8;--tisza-dim:rgba(58,143,232,0.12)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+header{position:relative;text-align:center;padding:50px 20px 36px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:26px;margin-bottom:14px;animation:sg 3s ease-in-out infinite alternate}
+@keyframes sg{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hsub{margin-top:8px;font-style:italic;font-size:.95rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px;align-items:center}
+.uname{font-size:.78rem;color:var(--muted);font-style:italic}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+.login-bar{background:rgba(201,168,76,.06);border-bottom:1px solid var(--border);padding:10px 20px;text-align:center;font-size:.85rem;color:var(--muted);font-style:italic}
+.login-bar a{color:var(--gold);text-decoration:none}
+.login-bar a:hover{text-decoration:underline}
+main{max-width:960px;margin:0 auto;padding:50px 20px 70px}
+.orn{text-align:center;color:var(--gold);font-size:1.1rem;letter-spacing:.5em;margin:0 0 44px;opacity:.4}
+.party-block{margin-bottom:64px}
+.ph{display:flex;align-items:center;gap:12px;margin-bottom:28px;padding-bottom:12px;border-bottom:1px solid var(--border);position:relative}
+.ph::after{content:'';position:absolute;bottom:-1px;left:0;width:70px;height:2px}
+.ph.f::after{background:var(--fidesz)}.ph.t::after{background:var(--tisza)}
+.pb{padding:3px 11px;border-radius:2px;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.pb.f{background:var(--fidesz-dim);color:var(--fidesz);border:1px solid rgba(255,122,0,.3)}
+.pb.t{background:var(--tisza-dim);color:var(--tisza);border:1px solid rgba(58,143,232,.3)}
+.pnh{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700}
+.pnh.f{color:var(--fidesz)}.pnh.t{color:var(--tisza)}
+.candidates-list{display:grid;gap:20px}
+.cand-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+.cand-header{display:flex;align-items:center;gap:18px;padding:20px 22px;cursor:pointer;transition:background .2s;user-select:none}
+.cand-header:hover{background:rgba(255,255,255,.03)}
+.cand-poster{width:56px;height:74px;object-fit:cover;border-radius:2px;border:1px solid var(--border);flex-shrink:0;background:#1a1a1a}
+.cand-poster-ph{width:56px;height:74px;border-radius:2px;border:1px solid var(--border);flex-shrink:0;background:#1a1a1a;display:flex;align-items:center;justify-content:center;color:#333;font-size:.6rem;text-transform:uppercase;letter-spacing:.08em}
+.cand-info{flex:1}
+.cand-num{font-size:.65rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:3px}
+.cand-num.f{color:var(--fidesz)}.cand-num.t{color:var(--tisza)}
+.cand-name{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700}
+.cand-toggle{font-size:.75rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-left:auto;flex-shrink:0}
+.campaign-body{display:none;border-top:1px solid var(--border)}
+.campaign-body.open{display:block}
+.campaign-content{padding:22px 24px}
+.campaign-empty{color:var(--muted);font-style:italic;font-size:.9rem;padding:20px 24px}
+.campaign-text{font-size:.97rem;line-height:1.75;white-space:pre-wrap;color:var(--text)}
+.campaign-meta{font-size:.75rem;color:var(--muted);font-style:italic;margin-top:14px;padding-top:10px;border-top:1px solid var(--border)}
+.post-form{border-top:1px solid var(--border);padding:20px 24px;background:rgba(0,0,0,.2)}
+.post-form label{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.post-form textarea{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.97rem;padding:10px 13px;border-radius:2px;outline:none;resize:vertical;min-height:100px;transition:border-color .2s}
+.post-form textarea:focus{border-color:var(--gold)}
+.post-actions{display:flex;align-items:center;gap:10px;margin-top:10px}
+.post-btn{padding:8px 22px;font-family:'Playfair Display',serif;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s}
+.post-btn:hover{background-position:100%}
+.del-btn{padding:7px 14px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070;font-family:'EB Garamond',serif;font-size:.8rem;cursor:pointer;border-radius:2px;transition:background .2s}
+.del-btn:hover{background:rgba(139,26,26,.4)}
+.post-msg{font-size:.82rem;font-style:italic;color:var(--muted);margin-left:4px}
+.own-badge{display:inline-block;padding:2px 8px;background:rgba(201,168,76,.1);border:1px solid rgba(201,168,76,.3);color:var(--gold);font-size:.65rem;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;margin-left:8px;vertical-align:middle}
+.dvd{border:none;border-top:1px solid var(--border);margin:44px 0}
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <span class="uname" id="uname-display"></span>
+    <a class="nlink" href="index.html">🗳 Vote</a>
+    <a class="nlink" href="public.html">🏛 Bazsinia</a>
+    <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="seal">🎙</div>
+  <h1>Bazsinia</h1>
+  <p class="hsub">Campaign Page — Hear from the Candidates</p>
+</header>
+
+<div class="login-bar" id="login-bar">
+  You are viewing as a guest. <a href="index.html">Sign in</a> to post your campaign if you are a candidate.
+</div>
+
+<main>
+  <div class="orn">✦ &nbsp; ✦ &nbsp; ✦</div>
+  <div class="party-block">
+    <div class="ph f">
+      <span class="pb f">Party</span>
+      <span class="pnh f">Fidesz</span>
+    </div>
+    <div class="candidates-list" id="fidesz-list"></div>
+  </div>
+  <hr class="dvd">
+  <div class="party-block">
+    <div class="ph t">
+      <span class="pb t">Party</span>
+      <span class="pnh t">Tisza</span>
+    </div>
+    <div class="candidates-list" id="tisza-list"></div>
+  </div>
+</main>
+
+<footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Campaign Portal</p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, deleteDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const ADMIN_EMAIL = "admin@bazsinia.com";
+
+const CANDIDATES = {
+  fidesz:[
+    {id:'f1', name:'Kiss Balázs',      img:'poster_f1.jpg', email:'kissbalazs@bazsinia.com'},
+    {id:'f2', name:'Laki Dion',         img:'poster_f2.jpg', email:'lakidion@bazsinia.com'},
+    {id:'f3', name:'Arany János',       img:'poster_f3.jpg', email:'aranyjanos@bazsinia.com'},
+    {id:'f4', name:'Marczali Johanna',  img:'poster_f4.jpg', email:'marczalijohanna@bazsinia.com'},
+    {id:'f5', name:'Marczali Léna',     img:'poster_f5.jpg', email:'marczalilena@bazsinia.com'},
+    {id:'f6', name:'Kiss Tamás',        img:'poster_f6.jpg', email:'kisstamas@bazsinia.com'},
+    {id:'f7', name:'Kele Péter',        img:'poster_f7.jpg', email:'kelepeter@bazsinia.com'},
+  ],
+  tisza:[
+    {id:'t1', name:'Búzás Benedek',  img:'poster_t1.jpg', email:'buzasbenedek@bazsinia.com'},
+    {id:'t2', name:'Ronald Marcell', img:'poster_t2.jpg', email:'ronaldmarcell@bazsinia.com'},
+  ]
+};
+
+let currentUser = null;
+let campaigns = {};
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('uname-display').textContent = user.email.split('@')[0];
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('login-bar').style.display = 'none';
+  }
+  await loadAllCampaigns();
+  renderAll();
+});
+
+window.doLogout = async function() { await signOut(auth); location.reload(); };
+
+async function loadAllCampaigns() {
+  const all = [...CANDIDATES.fidesz, ...CANDIDATES.tisza];
+  await Promise.all(all.map(async c => {
+    const snap = await getDoc(doc(db, 'campaigns', c.id));
+    campaigns[c.id] = snap.exists() ? snap.data() : null;
+  }));
+}
+
+function isOwner(candidateEmail) {
+  if (!currentUser) return false;
+  if (currentUser.email === ADMIN_EMAIL) return true;
+  return currentUser.email === candidateEmail;
+}
+
+function candHTML(c, party) {
+  const cl = party === 'fidesz' ? 'f' : 't';
+  const lb = party === 'fidesz' ? 'Fidesz' : 'Tisza';
+  const nm = c.id.replace(/\D/g, '');
+  const camp = campaigns[c.id];
+  const owner = isOwner(c.email);
+  const hasCamp = camp && camp.text;
+
+  const posterHTML = `<img class="cand-poster" src="${c.img}" alt="${c.name}" onerror="this.outerHTML='<div class=cand-poster-ph>No Photo</div>'">`;
+
+  const contentHTML = hasCamp
+    ? `<div class="campaign-content">
+        <div class="campaign-text">${camp.text}</div>
+        <div class="campaign-meta">Posted ${camp.updatedAt?.seconds ? new Date(camp.updatedAt.seconds*1000).toLocaleDateString('en-GB') : ''}</div>
+       </div>`
+    : `<div class="campaign-empty">No campaign posted yet.</div>`;
+
+  const formHTML = owner
+    ? `<div class="post-form">
+        <label>${hasCamp ? 'Update' : 'Write'} your campaign statement</label>
+        <textarea id="ta-${c.id}" placeholder="Write your campaign message here…">${hasCamp ? camp.text : ''}</textarea>
+        <div class="post-actions">
+          <button class="post-btn" onclick="window.saveCampaign('${c.id}')">Save</button>
+          ${hasCamp ? `<button class="del-btn" onclick="window.deleteCampaign('${c.id}')">Delete</button>` : ''}
+          <span class="post-msg" id="msg-${c.id}"></span>
+        </div>
+       </div>`
+    : '';
+
+  return `<div class="cand-card" id="card-${c.id}">
+    <div class="cand-header" onclick="window.toggleCard('${c.id}')">
+      ${posterHTML}
+      <div class="cand-info">
+        <div class="cand-num ${cl}">${lb} · No.${nm}</div>
+        <div class="cand-name">${c.name}${owner ? '<span class="own-badge">You</span>' : ''}</div>
+      </div>
+      <span class="cand-toggle" id="tog-${c.id}">${hasCamp ? '▼ Read Campaign' : '▼ No Campaign Yet'}</span>
+    </div>
+    <div class="campaign-body" id="body-${c.id}">
+      ${contentHTML}
+      ${formHTML}
+    </div>
+  </div>`;
+}
+
+function renderAll() {
+  document.getElementById('fidesz-list').innerHTML = CANDIDATES.fidesz.map(c => candHTML(c, 'fidesz')).join('');
+  document.getElementById('tisza-list').innerHTML  = CANDIDATES.tisza.map(c  => candHTML(c, 'tisza')).join('');
+}
+
+window.toggleCard = function(id) {
+  const body = document.getElementById('body-' + id);
+  const tog  = document.getElementById('tog-' + id);
+  const open = body.classList.toggle('open');
+  const camp = campaigns[id];
+  tog.textContent = open ? '▲ Close' : (camp && camp.text ? '▼ Read Campaign' : '▼ No Campaign Yet');
+};
+
+window.saveCampaign = async function(id) {
+  const ta  = document.getElementById('ta-' + id);
+  const msg = document.getElementById('msg-' + id);
+  const text = ta.value.trim();
+  if (!text) { msg.textContent = 'Please write something first.'; return; }
+  msg.textContent = 'Saving…';
+  try {
+    await setDoc(doc(db, 'campaigns', id), { text, updatedAt: serverTimestamp(), candidateId: id });
+    campaigns[id] = { text, updatedAt: null };
+    msg.textContent = 'Saved!';
+    setTimeout(() => renderAll(), 800);
+  } catch(e) { msg.textContent = 'Error: ' + e.message; }
+};
+
+window.deleteCampaign = async function(id) {
+  if (!confirm('Delete this campaign?')) return;
+  await deleteDoc(doc(db, 'campaigns', id));
+  campaigns[id] = null;
+  renderAll();
+};
+</script>
+</body>
+</html>
