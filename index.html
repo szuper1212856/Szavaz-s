@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
 <style>
 :root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--fidesz:#FF7A00;--fidesz-dim:rgba(255,122,0,0.12);--tisza:#3A8FE8;--tisza-dim:rgba(58,143,232,0.12)}
-
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
 .auth-screen{display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px}
@@ -26,7 +25,6 @@ body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,
 .auth-switch{margin-top:16px;font-size:.88rem;color:var(--muted)}
 .auth-switch a{color:var(--gold);cursor:pointer}
 .auth-error{margin-top:10px;color:#C07070;font-style:italic;font-size:.87rem;min-height:18px}
-.auth-success{margin-top:10px;color:#7BC49A;font-style:italic;font-size:.87rem;min-height:18px}
 header{position:relative;text-align:center;padding:48px 20px 34px;border-bottom:1px solid var(--border)}
 header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
 .flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
@@ -166,7 +164,7 @@ footer span{color:var(--gold)}
     <div style="background:#111;border:1px solid var(--border);border-radius:2px;padding:18px 16px;margin-bottom:18px;text-align:left">
       <p style="font-size:.9rem;line-height:1.7;color:var(--muted)">To protect the integrity of Bazsinia&#39;s elections, accounts are now <strong style="color:var(--text)">created by the admin only.</strong></p>
       <p style="font-size:.9rem;line-height:1.7;color:var(--muted);margin-top:10px">Send an email to request your login credentials:</p>
-      <a href="mailto:bazsiniapresidential@gmail.com?subject=Voter Access Request&body=Hello, I would like to request a voter account for Bazsinia Presidential Election. My name is: " style="display:inline-block;margin-top:12px;padding:9px 18px;background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold-light);font-family:'EB Garamond',serif;font-size:.9rem;border-radius:2px;text-decoration:none;letter-spacing:.05em;transition:background .2s" onmouseover="this.style.background='rgba(201,168,76,.2)'" onmouseout="this.style.background='rgba(201,168,76,.1)'">
+      <a href="mailto:bazsiniapresidential@gmail.com?subject=Voter Access Request&body=Hello, I would like to request a voter account for Bazsinia Presidential Election. My name is: " style="display:inline-block;margin-top:12px;padding:9px 18px;background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold-light);font-family:'EB Garamond',serif;font-size:.9rem;border-radius:2px;text-decoration:none;letter-spacing:.05em" onmouseover="this.style.background='rgba(201,168,76,.2)'" onmouseout="this.style.background='rgba(201,168,76,.1)'">
         ✉ bazsiniapresidential@gmail.com
       </a>
       <p style="font-size:.78rem;color:var(--muted);font-style:italic;margin-top:10px">Include your full name in the email. The admin will send you your login details.</p>
@@ -180,13 +178,14 @@ footer span{color:var(--gold)}
     <div class="flag-stripe"></div>
     <div class="ubar">
       <span class="uname" id="user-display"></span>
+      <a class="nlink" href="campaign.html">🎙 Campaigns</a>
       <a class="nlink" href="public.html">🏛 Bazsinia</a>
       <button class="nlink" onclick="doLogout()">Logout</button>
     </div>
     <div class="seal">🦅</div>
     <h1>Bazsinia</h1>
     <p class="subtitle">Monthly Presidential Election</p>
-    <div class="edate">Voting opens every 15th</div>
+    <div class="edate">Voting opens every 18th</div>
   </header>
   <div id="sb" class="waiting"><span id="st">Loading…</span></div>
   <main>
@@ -269,7 +268,7 @@ import { getFirestore, doc, getDoc, setDoc, collection, getDocs, serverTimestamp
 const EMAILJS_SERVICE  = "YOUR_SERVICE_ID";
 const EMAILJS_TEMPLATE = "YOUR_TEMPLATE_ID";
 const EMAILJS_KEY      = "YOUR_PUBLIC_KEY";
-const WINNER_EMAIL     = "president@bazsinia.com";
+const WINNER_EMAIL     = "bazsiniapresidential@gmail.com";
 
 emailjs.init(EMAILJS_KEY);
 
@@ -286,6 +285,7 @@ const db   = getFirestore(app);
 
 const ADMIN_EMAIL     = "admin@bazsinia.com";
 const PRESIDENT_EMAIL = "president@bazsinia.com";
+const VOTE_DAY        = 18;
 
 const CANDIDATES = {
   fidesz:[
@@ -354,8 +354,8 @@ async function loadVoter(user){
 
 function monthKey(){const n=new Date();return`${n.getFullYear()}-${n.getMonth()+1}`;}
 function monthLabel(){const n=new Date();return['January','February','March','April','May','June','July','August','September','October','November','December'][n.getMonth()]+' '+n.getFullYear();}
-function isVotingDay(){return new Date().getDate()===15;}
-function isPast(){return new Date().getDate()>15;}
+function isVotingDay(){return new Date().getDate()===VOTE_DAY;}
+function isPast(){return new Date().getDate()>VOTE_DAY;}
 
 function updStatus(){
   const bn=document.getElementById('sb');
@@ -367,7 +367,7 @@ function updStatus(){
   if(vs==='delayed'){bn.className='delayed';st.textContent='⏸ Voting temporarily delayed.';btn.disabled=true;vn.textContent='Please wait.';return;}
   if(vs==='closed'){bn.className='closed';st.textContent='🏛️ Polls are closed.';btn.disabled=true;vn.textContent='Voting has ended.';return;}
   if(isVotingDay()){
-    bn.className='open';st.textContent='🗳️ It\'s the 15th — Polls are OPEN!';
+    bn.className='open';st.textContent='🗳️ It\'s the 18th — Polls are OPEN!';
     vn.textContent=selId?'Click "Cast Your Vote" to confirm.':'Select a candidate.';
     btn.disabled=!selId;
   } else if(isPast()){
@@ -375,12 +375,12 @@ function updStatus(){
   } else {
     bn.className='waiting';
     const now=new Date();
-    const n15=new Date(now.getFullYear(),now.getMonth(),15,0,0,0);
-    if(n15<now)n15.setMonth(n15.getMonth()+1);
-    const diff=n15-now;
+    const n18=new Date(now.getFullYear(),now.getMonth(),VOTE_DAY,0,0,0);
+    if(n18<now)n18.setMonth(n18.getMonth()+1);
+    const diff=n18-now;
     const dd=Math.floor(diff/86400000),hh=Math.floor((diff%86400000)/3600000),mm=Math.floor((diff%3600000)/60000),ss=Math.floor((diff%60000)/1000);
-    st.innerHTML=`⏳ Next vote on the <strong>15th</strong> — <strong>${dd}d ${hh}h ${mm}m ${ss}s</strong>`;
-    btn.disabled=true;vn.textContent='Voting opens on the 15th of each month.';
+    st.innerHTML=`⏳ Next vote on the <strong>18th</strong> — <strong>${dd}d ${hh}h ${mm}m ${ss}s</strong>`;
+    btn.disabled=true;vn.textContent='Voting opens on the 18th of each month.';
   }
 }
 setInterval(()=>{if(document.getElementById('voting-screen').style.display!=='none')updStatus();},1000);
@@ -440,8 +440,6 @@ window.doLogin=async function(){
   catch(ex){err.textContent=ex.code==='auth/invalid-credential'?'Wrong email or password.':'Error: '+ex.message;btn.disabled=false;btn.textContent='Sign In';}
 };
 
-
-
 window.doLogout=async function(){
   await signOut(auth);
   document.getElementById('li-btn').disabled=false;
@@ -472,11 +470,7 @@ window.declareWinner=async function(){
   if(!confirm(`Declare ${topName} as President for ${ml} with ${topCount} vote(s)?\n\nThis will send an email to ${WINNER_EMAIL}.`))return;
   await setDoc(doc(db,'presidents',mk),{candidateId:topId,name:topName,votes:topCount,month:ml,declaredAt:serverTimestamp()});
   try{
-    await emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{
-      to_name:topName,
-      to_email:WINNER_EMAIL,
-      month:ml
-    });
+    await emailjs.send(EMAILJS_SERVICE,EMAILJS_TEMPLATE,{to_name:topName,to_email:WINNER_EMAIL,month:ml});
     showMo('👑','Winner Declared!',`${topName} is President for ${ml}. Email sent to ${WINNER_EMAIL}.`);
   }catch(e){
     showMo('👑','Winner Declared!',`${topName} is President for ${ml}. Note: email failed — check your EmailJS credentials.`);
@@ -491,7 +485,7 @@ window.resetVotes=async function(){
 };
 
 function updBadge(){
-  const map={open:['op','🟢 Voting OPEN'],closed:['cl','🔴 Voting CLOSED'],delayed:['dl','🟡 Voting DELAYED'],auto:['cl','⚙️ Auto (15th of month)']};
+  const map={open:['op','🟢 Voting OPEN'],closed:['cl','🔴 Voting CLOSED'],delayed:['dl','🟡 Voting DELAYED'],auto:['cl','⚙️ Auto (18th of month)']};
   const[cl,lb]=map[vs]||map.auto;
   document.getElementById('vsb-wrap').innerHTML=`<div class="vsb ${cl}">${lb}</div>`;
 }
@@ -551,7 +545,6 @@ function showMo(ico,ttl,bdy){
 window.closeMo=function(){document.getElementById('mo').classList.remove('show');};
 document.getElementById('mo').addEventListener('click',e=>{if(e.target===e.currentTarget)window.closeMo();});
 ['li-email','li-pass'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();}));
-
 </script>
 </body>
 </html>
