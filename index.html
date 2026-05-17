@@ -150,9 +150,9 @@ footer span{color:var(--gold)}
     <div class="auth-sub">Presidential Election — Sign In</div>
     <div class="ig"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com" autocomplete="email"/></div>
     <div class="ig"><label>Password</label><input type="password" id="li-pass" placeholder="••••••••" autocomplete="current-password"/></div>
-    <button class="auth-btn" id="li-btn" onclick="doLogin()">Sign In</button>
+    <button class="auth-btn" id="li-btn">Sign In</button>
     <div class="auth-error" id="li-err"></div>
-    <div class="auth-switch">No account? <a onclick="showScreen('signup-screen')">Request access</a></div>
+    <div class="auth-switch">No account? <a onclick="window.showScreen('signup-screen')">Request access</a></div>
   </div>
 </div>
 
@@ -169,7 +169,7 @@ footer span{color:var(--gold)}
       </a>
       <p style="font-size:.78rem;color:var(--muted);font-style:italic;margin-top:10px">Include your full name in the email. The admin will send you your login details.</p>
     </div>
-    <div class="auth-switch">Already have an account? <a onclick="showScreen('login-screen')">Sign in here</a></div>
+    <div class="auth-switch">Already have an account? <a onclick="window.showScreen('login-screen')">Sign in here</a></div>
   </div>
 </div>
 
@@ -180,7 +180,7 @@ footer span{color:var(--gold)}
       <span class="uname" id="user-display"></span>
       <a class="nlink" href="campaign.html">🎙 Campaigns</a>
       <a class="nlink" href="public.html">🏛 Bazsinia</a>
-      <button class="nlink" onclick="doLogout()">Logout</button>
+      <button class="nlink" id="logout-btn-main">Logout</button>
     </div>
     <div class="seal">🦅</div>
     <h1>Bazsinia</h1>
@@ -208,7 +208,7 @@ footer span{color:var(--gold)}
       <div class="grid dbl" id="tg"></div>
     </div>
     <div class="vs">
-      <button id="vbtn" disabled onclick="submitVote()">Cast Your Vote</button>
+      <button id="vbtn" disabled>Cast Your Vote</button>
       <p class="vn" id="vn">Select a candidate to cast your vote.</p>
     </div>
   </main>
@@ -219,13 +219,13 @@ footer span{color:var(--gold)}
   <div class="ah">
     <div class="at">🗂 Admin Panel</div>
     <div class="aa">
-      <button class="ab gr" onclick="setVS('open')">▶ Open Voting</button>
-      <button class="ab yw" onclick="setVS('delayed')">⏸ Delay</button>
-      <button class="ab rd" onclick="setVS('closed')">■ Close</button>
-      <button class="ab gl" onclick="declareWinner()">👑 Declare Winner</button>
-      <button class="ab bl" onclick="resetVotes()">↺ Reset Month</button>
-      <button class="ab nt" onclick="loadAdmin()">↻ Refresh</button>
-      <button class="ab nt" onclick="doLogout()">Logout</button>
+      <button class="ab gr" id="btn-open">▶ Open Voting</button>
+      <button class="ab yw" id="btn-delay">⏸ Delay</button>
+      <button class="ab rd" id="btn-close">■ Close</button>
+      <button class="ab gl" id="btn-winner">👑 Declare Winner</button>
+      <button class="ab bl" id="btn-reset">↺ Reset Month</button>
+      <button class="ab nt" id="btn-refresh">↻ Refresh</button>
+      <button class="ab nt" id="btn-logout">Logout</button>
     </div>
   </div>
   <div id="vsb-wrap"></div>
@@ -253,7 +253,7 @@ footer span{color:var(--gold)}
     <div class="mi" id="mico">🗳️</div>
     <h2 id="mttl">Vote Recorded!</h2>
     <p id="mbdy">Thank you.</p>
-    <button id="mc" onclick="closeMo()">Close</button>
+    <button id="mc" id="btn-moclose">Close</button>
   </div>
 </div>
 
@@ -403,7 +403,7 @@ function updStatus(){
 }
 setInterval(()=>{if(document.getElementById('voting-screen').style.display!=='none')updStatus();},1000);
 
-function _pick(card){
+window._pick=function(card){
   const open=vs==='open'||(vs==='auto'&&isVotingDay()&&!isPast());
   if(!open||voted)return;
   if(cu && SELF_VOTE_MAP[cu.email] === card.dataset.id)return;
@@ -435,7 +435,7 @@ function markVoted(id){
   });
 }
 
-function showScreen(id){
+window.showScreen=function(id){
   ['login-screen','signup-screen'].forEach(s=>document.getElementById(s).classList.remove('active'));
   document.getElementById(id).classList.add('active');
 };
@@ -562,19 +562,35 @@ function showMo(ico,ttl,bdy){
   document.getElementById('mo').classList.add('show');
 }
 function closeMo(){document.getElementById('mo').classList.remove('show');};
-document.getElementById('mo').addEventListener('click',e=>{if(e.target===e.currentTarget)window.closeMo();});
-['li-email','li-pass'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();}));
 
-window.doLogin   = doLogin;
-window.doLogout  = doLogout;
-window.setVS     = setVS;
-window.declareWinner = declareWinner;
-window.resetVotes = resetVotes;
-window.loadAdmin  = loadAdmin;
-window.closeMo   = closeMo;
-window._pick     = _pick;
-window.submitVote = submitVote;
-window.showScreen = showScreen;
+
+
+// Attach all event listeners after DOM is ready
+document.getElementById('li-btn').addEventListener('click', doLogin);
+document.getElementById('li-email').addEventListener('keydown', e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('li-pass').addEventListener('keydown', e=>{if(e.key==='Enter')doLogin();});
+
+const logoutMain = document.getElementById('logout-btn-main');
+if(logoutMain) logoutMain.addEventListener('click', doLogout);
+const btnLogout = document.getElementById('btn-logout');
+if(btnLogout) btnLogout.addEventListener('click', doLogout);
+
+const btnOpen = document.getElementById('btn-open');
+if(btnOpen) btnOpen.addEventListener('click', ()=>setVS('open'));
+const btnDelay = document.getElementById('btn-delay');
+if(btnDelay) btnDelay.addEventListener('click', ()=>setVS('delayed'));
+const btnClose = document.getElementById('btn-close');
+if(btnClose) btnClose.addEventListener('click', ()=>setVS('closed'));
+const btnWinner = document.getElementById('btn-winner');
+if(btnWinner) btnWinner.addEventListener('click', declareWinner);
+const btnReset = document.getElementById('btn-reset');
+if(btnReset) btnReset.addEventListener('click', resetVotes);
+const btnRefresh = document.getElementById('btn-refresh');
+if(btnRefresh) btnRefresh.addEventListener('click', loadAdmin);
+const btnMoclose = document.getElementById('btn-moclose');
+if(btnMoclose) btnMoclose.addEventListener('click', closeMo);
+document.getElementById('mo').addEventListener('click', e=>{if(e.target===e.currentTarget)closeMo();});
+document.getElementById('vbtn').addEventListener('click', submitVote);
 </script>
 </body>
 </html>
