@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — City</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--green:#2A7A4F;--red:#8B1A1A;--blue:#1A4A8B;--orange:#8B5A1A}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+header{position:relative;text-align:center;padding:44px 20px 30px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.6rem,4vw,2.8rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hsub{margin-top:6px;font-style:italic;font-size:.9rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px;align-items:center}
+.uname{font-size:.78rem;color:var(--muted);font-style:italic}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+.pres-bar{text-align:center;padding:10px 20px;background:rgba(201,168,76,.07);border-bottom:1px solid var(--border);font-size:.85rem;color:var(--gold);font-style:italic}
+.pres-bar span{font-weight:600;color:var(--gold-light)}
+main{max-width:1100px;margin:0 auto;padding:36px 20px 70px}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:32px}
+.stat-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px 16px;position:relative;overflow:hidden}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px}
+.stat-card.budget::after{background:#C9A84C}
+.stat-card.happy::after{background:#2A7A4F}
+.stat-card.crime::after{background:#8B1A1A}
+.stat-card.health::after{background:#1A4A8B}
+.stat-card.edu::after{background:#5A1A8B}
+.stat-card.infra::after{background:#8B5A1A}
+.stat-icon{font-size:1.4rem;margin-bottom:4px}
+.stat-label{font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.stat-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--gold-light)}
+.stat-bar-wrap{height:4px;background:#222;border-radius:2px;margin-top:6px;overflow:hidden}
+.stat-bar{height:100%;border-radius:2px;transition:width .8s}
+.stat-bar.budget{background:#C9A84C}
+.stat-bar.happy{background:#2A7A4F}
+.stat-bar.crime{background:#8B1A1A}
+.stat-bar.health{background:#1A4A8B}
+.stat-bar.edu{background:#5A1A8B}
+.stat-bar.infra{background:#8B5A1A}
+.stat-trend{font-size:.7rem;margin-top:4px}
+.stat-trend.up{color:#7BC49A}
+.stat-trend.down{color:#C07070}
+.stat-trend.flat{color:var(--muted)}
+
+/* SECTIONS */
+.section{margin-bottom:36px}
+.stl{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.stl .actions-left{margin-left:auto;font-family:'EB Garamond',serif;font-size:.78rem;color:var(--muted);font-style:italic;font-weight:400}
+
+/* EVENTS */
+.events-list{display:grid;gap:10px}
+.event-card{background:var(--panel);border-left:3px solid var(--border);border-radius:0 4px 4px 0;padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.event-card.crisis{border-left-color:#8B1A1A}
+.event-card.good{border-left-color:#2A7A4F}
+.event-card.warning{border-left-color:#8B6400}
+.event-card.info{border-left-color:#1A4A8B}
+.event-icon{font-size:1.3rem;flex-shrink:0;margin-top:2px}
+.event-body{flex:1}
+.event-title{font-family:'Playfair Display',serif;font-size:.95rem;margin-bottom:3px}
+.event-desc{font-size:.84rem;color:var(--muted);line-height:1.5}
+.event-time{font-size:.72rem;color:var(--muted);font-style:italic;margin-top:4px}
+.event-empty{color:var(--muted);font-style:italic;font-size:.88rem;padding:12px 0}
+
+/* ACTIONS (president only) */
+.actions-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.action-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px 18px;transition:border-color .2s}
+.action-card:hover{border-color:rgba(201,168,76,.3)}
+.action-title{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold-light);margin-bottom:4px}
+.action-desc{font-size:.82rem;color:var(--muted);line-height:1.4;margin-bottom:12px}
+.action-effects{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px}
+.eff{font-size:.7rem;padding:2px 7px;border-radius:10px;border:1px solid}
+.eff.pos{background:rgba(42,122,79,.15);color:#7BC49A;border-color:rgba(42,122,79,.3)}
+.eff.neg{background:rgba(139,26,26,.15);color:#C07070;border-color:rgba(139,26,26,.3)}
+.act-btn{width:100%;padding:8px;font-family:'Playfair Display',serif;font-size:.82rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .3s,opacity .2s}
+.act-btn:hover:not(:disabled){background-position:100%}
+.act-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.act-btn.used{background:#1a1a1a;color:#444;border:1px solid #2a2a2a;cursor:not-allowed}
+.actions-remaining{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:2px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+.ar-good{background:rgba(42,122,79,.15);border:1px solid #2A7A4F;color:#7BC49A}
+.ar-warn{background:rgba(139,100,0,.15);border:1px solid #8B6400;color:#C9A84C}
+.ar-none{background:rgba(139,26,26,.12);border:1px solid #8B1A1A;color:#C07070}
+
+/* PETITION */
+.petition-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 22px}
+.petition-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);margin-bottom:6px}
+.petition-desc{font-size:.88rem;color:var(--muted);line-height:1.5;margin-bottom:14px}
+.petition-bar-wrap{height:8px;background:#222;border-radius:4px;margin-bottom:8px;overflow:hidden}
+.petition-bar{height:100%;background:linear-gradient(90deg,#8B1A1A,#C07070);border-radius:4px;transition:width .6s}
+.petition-meta{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:14px}
+.sign-btn{padding:8px 22px;font-family:'EB Garamond',serif;font-size:.88rem;cursor:pointer;border-radius:2px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070;transition:background .2s}
+.sign-btn:hover:not(:disabled){background:rgba(139,26,26,.4)}
+.sign-btn:disabled{opacity:.5;cursor:not-allowed}
+.sign-btn.signed{background:rgba(139,26,26,.35);border-color:#C07070;color:#C07070}
+
+/* CITIZEN VOTE */
+.citizen-poll{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 22px;margin-bottom:14px}
+.poll-q{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);margin-bottom:14px}
+.poll-options{display:grid;gap:8px}
+.poll-opt{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#111;border:1px solid var(--border);border-radius:2px;cursor:pointer;transition:border-color .2s}
+.poll-opt:hover{border-color:var(--gold)}
+.poll-opt.voted{border-color:var(--gold);background:rgba(201,168,76,.06)}
+.poll-opt-label{flex:1;font-size:.9rem}
+.poll-opt-bar{height:4px;background:#222;border-radius:2px;margin-top:6px;overflow:hidden;width:100%}
+.poll-opt-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .5s}
+.poll-pct{font-size:.75rem;color:var(--muted);min-width:36px;text-align:right}
+
+/* LOG */
+.log-list{display:grid;gap:6px;max-height:260px;overflow-y:auto}
+.log-item{font-size:.82rem;color:var(--muted);padding:6px 10px;background:#111;border-radius:2px;border-left:2px solid var(--border)}
+.log-item.pres{border-left-color:var(--gold)}
+.log-item.crisis{border-left-color:#8B1A1A}
+.log-item.good{border-left-color:#2A7A4F}
+
+/* MODAL */
+#mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:300;align-items:center;justify-content:center}
+#mo.show{display:flex}
+#md{background:var(--panel);border:1px solid var(--gold);border-radius:4px;padding:38px 42px;text-align:center;max-width:420px;width:90%;animation:mi .3s cubic-bezier(.22,.61,.36,1)}
+@keyframes mi{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+#md .mico{font-size:40px;margin-bottom:10px}
+#md h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:8px}
+#md p{color:var(--muted);font-style:italic;font-size:.9rem;line-height:1.6}
+#md .meff{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px}
+#mc{margin-top:20px;padding:8px 24px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.88rem;cursor:pointer;border-radius:2px;transition:background .2s,color .2s}
+#mc:hover{background:var(--gold);color:#000}
+
+/* REVOLT BANNER */
+#revolt-banner{display:none;background:rgba(139,26,26,.25);border:1px solid #8B1A1A;border-radius:4px;padding:14px 18px;margin-bottom:24px;text-align:center}
+#revolt-banner h3{font-family:'Playfair Display',serif;color:#FF6666;font-size:1.1rem;margin-bottom:4px}
+#revolt-banner p{color:#C07070;font-size:.88rem}
+
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <span class="uname" id="uname"></span>
+    <a class="nlink" href="index.html">🗳 Vote</a>
+    <a class="nlink" href="public.html">🏛 Bazsinia</a>
+    <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
+  </div>
+  <h1>🏙 City of Bazsinia</h1>
+  <p class="hsub">Persistent city — every decision shapes the future</p>
+</header>
+
+<div class="pres-bar" id="pres-bar">Loading city status…</div>
+
+<main>
+  <div id="revolt-banner">
+    <h3>⚠️ Citizens are revolting!</h3>
+    <p>Happiness has dropped critically low. The president must act immediately or face a confidence vote.</p>
+  </div>
+
+  <!-- STATS -->
+  <div class="section">
+    <div class="stats-grid">
+      <div class="stat-card budget"><div class="stat-icon">💰</div><div class="stat-label">City Budget</div><div class="stat-val" id="sv-budget">—</div><div class="stat-bar-wrap"><div class="stat-bar budget" id="sb-budget"></div></div><div class="stat-trend" id="st-budget"></div></div>
+      <div class="stat-card happy"><div class="stat-icon">😊</div><div class="stat-label">Happiness</div><div class="stat-val" id="sv-happy">—</div><div class="stat-bar-wrap"><div class="stat-bar happy" id="sb-happy"></div></div><div class="stat-trend" id="st-happy"></div></div>
+      <div class="stat-card crime"><div class="stat-icon">🔒</div><div class="stat-label">Crime Rate</div><div class="stat-val" id="sv-crime">—</div><div class="stat-bar-wrap"><div class="stat-bar crime" id="sb-crime"></div></div><div class="stat-trend" id="st-crime"></div></div>
+      <div class="stat-card health"><div class="stat-icon">🏥</div><div class="stat-label">Healthcare</div><div class="stat-val" id="sv-health">—</div><div class="stat-bar-wrap"><div class="stat-bar health" id="sb-health"></div></div><div class="stat-trend" id="st-health"></div></div>
+      <div class="stat-card edu"><div class="stat-icon">📚</div><div class="stat-label">Education</div><div class="stat-val" id="sv-edu">—</div><div class="stat-bar-wrap"><div class="stat-bar edu" id="sb-edu"></div></div><div class="stat-trend" id="st-edu"></div></div>
+      <div class="stat-card infra"><div class="stat-icon">🏗</div><div class="stat-label">Infrastructure</div><div class="stat-val" id="sv-infra">—</div><div class="stat-bar-wrap"><div class="stat-bar infra" id="sb-infra"></div></div><div class="stat-trend" id="st-infra"></div></div>
+    </div>
+  </div>
+
+  <!-- RECENT EVENTS -->
+  <div class="section">
+    <div class="stl">📰 Recent Events</div>
+    <div class="events-list" id="events-list"><div class="event-empty">No events yet.</div></div>
+  </div>
+
+  <!-- PRESIDENT ACTIONS -->
+  <div id="president-panel" style="display:none">
+    <div class="section">
+      <div class="stl">⚡ Presidential Actions <span class="actions-left" id="actions-left-label"></span></div>
+      <div id="actions-remaining-badge"></div>
+      <div class="actions-grid" id="actions-grid"></div>
+    </div>
+  </div>
+
+  <!-- CITIZEN SECTION -->
+  <div id="citizen-panel">
+    <div class="section">
+      <div class="stl">✍️ Citizen Petition</div>
+      <div id="petition-wrap"></div>
+    </div>
+    <div class="section">
+      <div class="stl">🗳 Citizen Opinion Poll</div>
+      <div id="poll-wrap"></div>
+    </div>
+  </div>
+
+  <!-- CITY LOG -->
+  <div class="section">
+    <div class="stl">📋 City History Log</div>
+    <div class="log-list" id="log-list"><div class="log-item">Loading…</div></div>
+  </div>
+</main>
+
+<div id="mo">
+  <div id="md">
+    <div class="mico" id="mico">⚡</div>
+    <h2 id="mttl"></h2>
+    <p id="mbdy"></p>
+    <div class="meff" id="meff"></div>
+    <button id="mc" onclick="closeMo()">Close</button>
+  </div>
+</div>
+
+<footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; City Management System</p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, arrayUnion, serverTimestamp, onSnapshot, collection, addDoc, getDocs, query, orderBy, limit }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const PRESIDENT_EMAIL = "president@bazsinia.com";
+const ADMIN_EMAIL     = "admin@bazsinia.com";
+
+const DEFAULT_CITY = {
+  budget:70, happiness:65, crime:30, health:60, education:55, infrastructure:50,
+  actionsUsedThisMonth:[], lastActionMonth:'',
+  presidentName:'No President Yet'
+};
+
+const ACTIONS = [
+  {
+    id:'raise_tax', icon:'📈', title:'Raise Taxes',
+    desc:'Increase income tax by 5%. Fills the city coffers but frustrates citizens.',
+    effects:{budget:+15, happiness:-8},
+    effectLabels:[{l:'+Budget',t:'pos'},{l:'-Happiness',t:'neg'}]
+  },
+  {
+    id:'lower_tax', icon:'📉', title:'Lower Taxes',
+    desc:'Decrease income tax by 5%. Citizens rejoice but the budget suffers.',
+    effects:{budget:-12, happiness:+10},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'fund_police', icon:'👮', title:'Fund Police Force',
+    desc:'Increase police budget and salaries. Reduces crime but costs money.',
+    effects:{budget:-10, crime:-15, happiness:+5},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'-Crime',t:'pos'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'cut_police', icon:'✂️', title:'Cut Police Budget',
+    desc:'Reduce police funding. Officers quit, crime rises on the streets.',
+    effects:{budget:+8, crime:+20, happiness:-10},
+    effectLabels:[{l:'+Budget',t:'pos'},{l:'+Crime',t:'neg'},{l:'-Happiness',t:'neg'}]
+  },
+  {
+    id:'build_hospital', icon:'🏥', title:'Build New Hospital',
+    desc:'Construct a public hospital. Healthcare improves dramatically.',
+    effects:{budget:-20, health:+20, happiness:+8},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Healthcare',t:'pos'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'cut_health', icon:'🩹', title:'Cut Healthcare Funding',
+    desc:'Reduce hospital budgets. Saves money but citizens suffer.',
+    effects:{budget:+10, health:-18, happiness:-12},
+    effectLabels:[{l:'+Budget',t:'pos'},{l:'-Healthcare',t:'neg'},{l:'-Happiness',t:'neg'}]
+  },
+  {
+    id:'build_school', icon:'📚', title:'Invest in Education',
+    desc:'Fund new schools and teachers. Long-term benefits for the city.',
+    effects:{budget:-15, education:+18, happiness:+6},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Education',t:'pos'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'cut_edu', icon:'🪓', title:'Cut Education Budget',
+    desc:'Defund schools. Teachers leave, children lose opportunities.',
+    effects:{budget:+8, education:-15, happiness:-10},
+    effectLabels:[{l:'+Budget',t:'pos'},{l:'-Education',t:'neg'},{l:'-Happiness',t:'neg'}]
+  },
+  {
+    id:'repair_roads', icon:'🚧', title:'Repair Infrastructure',
+    desc:'Fix roads, bridges and public buildings. Citizens appreciate it.',
+    effects:{budget:-18, infrastructure:+20, happiness:+7},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Infrastructure',t:'pos'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'festival', icon:'🎉', title:'Host City Festival',
+    desc:'Organize a public festival. Happiness soars but it costs money.',
+    effects:{budget:-12, happiness:+18},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'anti_crime', icon:'🚔', title:'Launch Anti-Crime Campaign',
+    desc:'Special police operation targeting criminal organisations.',
+    effects:{budget:-14, crime:-22, happiness:+5},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'-Crime',t:'pos'},{l:'+Happiness',t:'pos'}]
+  },
+  {
+    id:'business_grant', icon:'🏢', title:'Business Grants',
+    desc:'Subsidise local businesses. Economy grows, budget dips short term.',
+    effects:{budget:-10, happiness:+12, infrastructure:+5},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'+Happiness',t:'pos'},{l:'+Infrastructure',t:'pos'}]
+  },
+];
+
+const RANDOM_EVENTS = [
+  {id:'flood',icon:'🌊',title:'Flash Flood',desc:'Heavy rains have flooded the lower districts. Infrastructure damage reported.',type:'crisis',effects:{infrastructure:-15,happiness:-10,budget:-8}},
+  {id:'boom',icon:'📈',title:'Economic Boom',desc:'A surge in tourism and trade has boosted city revenues significantly.',type:'good',effects:{budget:+20,happiness:+8}},
+  {id:'disease',icon:'🦠',title:'Disease Outbreak',desc:'A contagious illness is spreading. Healthcare system under pressure.',type:'crisis',effects:{health:-20,happiness:-12}},
+  {id:'strike',icon:'✊',title:'Worker Strike',desc:'City workers are striking over low wages. Services have ground to a halt.',type:'warning',effects:{happiness:-15,infrastructure:-8}},
+  {id:'donation',icon:'🎁',title:'Anonymous Donation',desc:'A wealthy benefactor has donated to the city treasury.',type:'good',effects:{budget:+15}},
+  {id:'scandal',icon:'📰',title:'Corruption Scandal',desc:'A city official has been caught embezzling public funds.',type:'crisis',effects:{budget:-12,happiness:-15}},
+  {id:'fire',icon:'🔥',title:'Warehouse Fire',desc:'A large fire has destroyed part of the industrial district.',type:'crisis',effects:{infrastructure:-12,budget:-8,happiness:-6}},
+  {id:'sports',icon:'🏆',title:'Bazsinia Wins!',desc:'The national football team won the championship. City morale is sky high!',type:'good',effects:{happiness:+20}},
+  {id:'drought',icon:'☀️',title:'Summer Drought',desc:'Water shortages are causing tension across the city districts.',type:'warning',effects:{happiness:-10,health:-8}},
+  {id:'tech',icon:'💡',title:'Tech Investment',desc:'A major tech company has chosen Bazsinia for their new headquarters.',type:'good',effects:{budget:+18,education:+8,happiness:+10}},
+];
+
+const POLL_OPTIONS = ['The president is doing a great job','More investment in healthcare needed','Lower taxes immediately','Focus on reducing crime','Better schools are the priority'];
+
+let currentUser = null;
+let cityState = null;
+let isPresident = false;
+let userPetitionSigned = false;
+let userPollVoted = null;
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (user) {
+    isPresident = user.email === PRESIDENT_EMAIL || user.email === ADMIN_EMAIL;
+    document.getElementById('uname').textContent = user.displayName || user.email.split('@')[0];
+    document.getElementById('logout-btn').style.display = 'block';
+  }
+  await loadCityState();
+  setupRealtimeListener();
+  await loadUserInteractions();
+  renderAll();
+  await loadEvents();
+  await loadLog();
+});
+
+window.doLogout = async function() { await signOut(auth); location.reload(); };
+
+async function loadCityState() {
+  const snap = await getDoc(doc(db, 'city', 'state'));
+  if (snap.exists()) {
+    cityState = snap.data();
+  } else {
+    cityState = { ...DEFAULT_CITY };
+    await setDoc(doc(db, 'city', 'state'), cityState);
+  }
+}
+
+function setupRealtimeListener() {
+  onSnapshot(doc(db, 'city', 'state'), snap => {
+    if (snap.exists()) { cityState = snap.data(); renderStats(); renderPresidentPanel(); checkRevolt(); }
+  });
+}
+
+async function loadUserInteractions() {
+  if (!currentUser) return;
+  const psnap = await getDoc(doc(db, 'city', 'petition'));
+  if (psnap.exists() && psnap.data().signers) {
+    userPetitionSigned = psnap.data().signers.includes(currentUser.uid);
+  }
+  const pollSnap = await getDoc(doc(db, 'city', 'poll'));
+  if (pollSnap.exists() && pollSnap.data().votes && pollSnap.data().votes[currentUser.uid]) {
+    userPollVoted = pollSnap.data().votes[currentUser.uid];
+  }
+}
+
+function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
+
+function renderStats() {
+  if (!cityState) return;
+  const stats = [
+    {key:'budget',id:'budget',label:'B$'},
+    {key:'happiness',id:'happy',label:'%'},
+    {key:'crime',id:'crime',label:'%'},
+    {key:'health',id:'health',label:'%'},
+    {key:'education',id:'edu',label:'%'},
+    {key:'infrastructure',id:'infra',label:'%'},
+  ];
+  stats.forEach(s => {
+    const v = clamp(cityState[s.key] || 0);
+    document.getElementById('sv-'+s.id).textContent = v + s.label;
+    document.getElementById('sb-'+s.id).style.width = v + '%';
+    const prev = cityState['prev_'+s.key];
+    const tEl = document.getElementById('st-'+s.id);
+    if (prev !== undefined) {
+      const diff = cityState[s.key] - prev;
+      if (diff > 0) { tEl.textContent = '▲ +'+ Math.round(diff); tEl.className='stat-trend up'; }
+      else if (diff < 0) { tEl.textContent = '▼ '+ Math.round(diff); tEl.className='stat-trend down'; }
+      else { tEl.textContent = '— stable'; tEl.className='stat-trend flat'; }
+    }
+  });
+  const presName = cityState.presidentName || 'No President';
+  document.getElementById('pres-bar').innerHTML = `Currently governed by <span>${presName}</span>`;
+}
+
+function checkRevolt() {
+  const h = cityState.happiness || 50;
+  document.getElementById('revolt-banner').style.display = h < 20 ? 'block' : 'none';
+}
+
+function getCurrentMonthKey() { const n=new Date(); return `${n.getFullYear()}-${n.getMonth()+1}`; }
+
+function renderPresidentPanel() {
+  if (!isPresident) { document.getElementById('president-panel').style.display='none'; return; }
+  document.getElementById('president-panel').style.display='block';
+  const mk = getCurrentMonthKey();
+  const used = (cityState.lastActionMonth === mk ? cityState.actionsUsedThisMonth : []) || [];
+  const remaining = 3 - used.length;
+  const badgeEl = document.getElementById('actions-remaining-badge');
+  if (remaining > 0) {
+    badgeEl.innerHTML = `<div class="actions-remaining ar-${remaining===3?'good':remaining===1?'warn':'good'}">${remaining} action${remaining!==1?'s':''} remaining this month</div>`;
+  } else {
+    badgeEl.innerHTML = `<div class="actions-remaining ar-none">No actions remaining this month</div>`;
+  }
+  document.getElementById('actions-left-label').textContent = `${remaining}/3 remaining`;
+  document.getElementById('actions-grid').innerHTML = ACTIONS.map(a => {
+    const isUsed = used.includes(a.id);
+    const disabled = isUsed || remaining === 0;
+    return `<div class="action-card">
+      <div class="action-title">${a.icon} ${a.title}</div>
+      <div class="action-desc">${a.desc}</div>
+      <div class="action-effects">${a.effectLabels.map(e=>`<span class="eff ${e.t}">${e.l}</span>`).join('')}</div>
+      <button class="act-btn${isUsed?' used':''}" ${disabled?'disabled':''} onclick="window.doAction('${a.id}')">${isUsed?'✓ Done':'Execute'}</button>
+    </div>`;
+  }).join('');
+}
+
+function renderAll() {
+  renderStats();
+  renderPresidentPanel();
+  checkRevolt();
+  renderPetition();
+  renderPoll();
+}
+
+window.doAction = async function(actionId) {
+  const action = ACTIONS.find(a => a.id === actionId);
+  if (!action || !isPresident) return;
+  const mk = getCurrentMonthKey();
+  const used = (cityState.lastActionMonth === mk ? cityState.actionsUsedThisMonth : []) || [];
+  if (used.includes(actionId) || used.length >= 3) return;
+
+  const updates = { actionsUsedThisMonth: [...used, actionId], lastActionMonth: mk };
+  Object.keys(action.effects).forEach(k => {
+    updates['prev_'+k] = cityState[k] || 0;
+    updates[k] = clamp((cityState[k] || 0) + action.effects[k]);
+  });
+
+  await updateDoc(doc(db,'city','state'), updates);
+  cityState = {...cityState, ...updates};
+
+  await addDoc(collection(db,'city','events'), {
+    icon: action.icon, title: action.title,
+    desc: `The president executed: ${action.title}. ${action.desc}`,
+    type: 'info', ts: serverTimestamp(), isPresAction: true
+  });
+  await addDoc(collection(db,'city','log'), {
+    text: `👑 President took action: ${action.title}`,
+    type:'pres', ts: serverTimestamp()
+  });
+
+  const effHTML = action.effectLabels.map(e=>`<span class="eff ${e.t}">${e.l}</span>`).join('');
+  showMo(action.icon, action.title, action.desc, effHTML);
+  renderPresidentPanel();
+  await loadEvents();
+  await loadLog();
+
+  await checkAndTriggerRandomEvent();
+};
+
+async function checkAndTriggerRandomEvent() {
+  if (Math.random() > 0.35) return;
+  const event = RANDOM_EVENTS[Math.floor(Math.random() * RANDOM_EVENTS.length)];
+  const updates = {};
+  Object.keys(event.effects).forEach(k => {
+    updates['prev_'+k] = cityState[k] || 0;
+    updates[k] = clamp((cityState[k]||0) + event.effects[k]);
+  });
+  await updateDoc(doc(db,'city','state'), updates);
+  await addDoc(collection(db,'city','events'), {
+    icon:event.icon, title:event.title, desc:event.desc,
+    type:event.type, ts:serverTimestamp(), isPresAction:false
+  });
+  await addDoc(collection(db,'city','log'), {
+    text:`${event.icon} Random event: ${event.title}`,
+    type: event.type==='good'?'good':'crisis', ts:serverTimestamp()
+  });
+  await loadEvents();
+  await loadLog();
+}
+
+async function loadEvents() {
+  const q = query(collection(db,'city','events'), orderBy('ts','desc'), limit(5));
+  const snap = await getDocs(q);
+  if (snap.empty) { document.getElementById('events-list').innerHTML='<div class="event-empty">No events yet.</div>'; return; }
+  document.getElementById('events-list').innerHTML = snap.docs.map(d => {
+    const e = d.data();
+    const t = e.ts?.seconds ? new Date(e.ts.seconds*1000).toLocaleDateString('en-GB') : '';
+    return `<div class="event-card ${e.type||'info'}">
+      <div class="event-icon">${e.icon||'📌'}</div>
+      <div class="event-body">
+        <div class="event-title">${e.title}</div>
+        <div class="event-desc">${e.desc}</div>
+        <div class="event-time">${t}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function loadLog() {
+  const q = query(collection(db,'city','log'), orderBy('ts','desc'), limit(20));
+  const snap = await getDocs(q);
+  if (snap.empty) { document.getElementById('log-list').innerHTML='<div class="log-item">No history yet.</div>'; return; }
+  document.getElementById('log-list').innerHTML = snap.docs.map(d=>{
+    const l=d.data();
+    return `<div class="log-item ${l.type||''}">${l.text}</div>`;
+  }).join('');
+}
+
+async function renderPetition() {
+  const snap = await getDoc(doc(db,'city','petition'));
+  let data = snap.exists() ? snap.data() : {title:'Citizens demand better infrastructure',desc:'The roads are in disrepair and public transport is failing. We demand the president prioritise infrastructure investment.',signers:[],goal:10};
+  if (!snap.exists()) await setDoc(doc(db,'city','petition'), data);
+  const count = (data.signers||[]).length;
+  const goal = data.goal || 10;
+  const pct = Math.min(100, Math.round((count/goal)*100));
+  const signed = currentUser && (data.signers||[]).includes(currentUser.uid);
+  document.getElementById('petition-wrap').innerHTML = `
+    <div class="petition-card">
+      <div class="petition-title">✍️ ${data.title}</div>
+      <div class="petition-desc">${data.desc}</div>
+      <div class="petition-bar-wrap"><div class="petition-bar" style="width:${pct}%"></div></div>
+      <div class="petition-meta"><span>${count} of ${goal} signatures</span><span>${pct}% complete</span></div>
+      ${currentUser
+        ? `<button class="sign-btn${signed?' signed':''}" onclick="window.signPetition()" ${signed?'disabled':''}>${signed?'✓ Signed':'Sign Petition'}</button>`
+        : `<div style="font-size:.82rem;color:var(--muted);font-style:italic"><a href="index.html" style="color:var(--gold)">Sign in</a> to sign the petition.</div>`}
+    </div>`;
+}
+
+window.signPetition = async function() {
+  if (!currentUser || userPetitionSigned) return;
+  await updateDoc(doc(db,'city','petition'), { signers: arrayUnion(currentUser.uid) });
+  await addDoc(collection(db,'city','log'), { text:`✍️ A citizen signed the petition.`, type:'info', ts:serverTimestamp() });
+  userPetitionSigned = true;
+  renderPetition();
+};
+
+async function renderPoll() {
+  const snap = await getDoc(doc(db,'city','poll'));
+  let data = snap.exists() ? snap.data() : {votes:{}};
+  if (!snap.exists()) await setDoc(doc(db,'city','poll'), data);
+  const votes = data.votes || {};
+  const counts = {};
+  POLL_OPTIONS.forEach(o => counts[o] = 0);
+  Object.values(votes).forEach(v => { if (counts[v]!==undefined) counts[v]++; });
+  const total = Object.values(counts).reduce((a,b)=>a+b, 0);
+  const myVote = currentUser ? votes[currentUser.uid] : null;
+
+  document.getElementById('poll-wrap').innerHTML = `
+    <div class="citizen-poll">
+      <div class="poll-q">What should Bazsinia prioritise right now?</div>
+      <div class="poll-options">
+        ${POLL_OPTIONS.map(o => {
+          const cnt = counts[o]||0;
+          const pct = total>0 ? Math.round((cnt/total)*100) : 0;
+          const isVoted = myVote===o;
+          return `<div class="poll-opt${isVoted?' voted':''}" onclick="window.castPollVote('${o.replace(/'/g,"\\'")}')">
+            <div style="flex:1">
+              <div class="poll-opt-label">${o}</div>
+              <div class="poll-opt-bar"><div class="poll-opt-fill" style="width:${pct}%"></div></div>
+            </div>
+            <div class="poll-pct">${pct}%</div>
+          </div>`;
+        }).join('')}
+      </div>
+      <div style="font-size:.75rem;color:var(--muted);font-style:italic;margin-top:10px">${total} vote${total!==1?'s':''} cast${!currentUser?' — <a href="index.html" style="color:var(--gold)">sign in</a> to vote':''}</div>
+    </div>`;
+}
+
+window.castPollVote = async function(option) {
+  if (!currentUser || userPollVoted) return;
+  const snap = await getDoc(doc(db,'city','poll'));
+  const votes = snap.exists() ? (snap.data().votes||{}) : {};
+  votes[currentUser.uid] = option;
+  await setDoc(doc(db,'city','poll'), {votes});
+  userPollVoted = option;
+  await addDoc(collection(db,'city','log'), { text:`🗳️ A citizen voted in the opinion poll.`, type:'info', ts:serverTimestamp() });
+  renderPoll();
+};
+
+function showMo(ico, ttl, bdy, effHTML='') {
+  document.getElementById('mico').textContent = ico;
+  document.getElementById('mttl').textContent = ttl;
+  document.getElementById('mbdy').textContent = bdy;
+  document.getElementById('meff').innerHTML = effHTML;
+  document.getElementById('mo').classList.add('show');
+}
+window.closeMo = function() { document.getElementById('mo').classList.remove('show'); };
+document.getElementById('mo').addEventListener('click', e => { if(e.target===e.currentTarget)window.closeMo(); });
+</script>
+</body>
+</html>
