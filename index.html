@@ -257,7 +257,7 @@ footer span{color:var(--gold)}
   </div>
 </div>
 
-<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
@@ -333,7 +333,6 @@ function renderCards(){
   document.getElementById('fg').innerHTML=CANDIDATES.fidesz.map(c=>cardHTML(c,'fidesz')).join('');
   document.getElementById('tg').innerHTML=CANDIDATES.tisza.map(c=>cardHTML(c,'tisza')).join('');
 }
-renderCards();
 
 let cu=null,voted=false,selId=null,selName=null,vs='auto';
 
@@ -404,7 +403,7 @@ function updStatus(){
 }
 setInterval(()=>{if(document.getElementById('voting-screen').style.display!=='none')updStatus();},1000);
 
-window._pick=function(card){
+function _pick(card){
   const open=vs==='open'||(vs==='auto'&&isVotingDay()&&!isPast());
   if(!open||voted)return;
   if(cu && SELF_VOTE_MAP[cu.email] === card.dataset.id)return;
@@ -415,7 +414,7 @@ window._pick=function(card){
   document.getElementById('vn').textContent='Click "Cast Your Vote" to confirm your choice.';
 };
 
-window.submitVote=async function(){
+async function submitVote(){
   const open=vs==='open'||(vs==='auto'&&isVotingDay()&&!isPast());
   if(!selId||!open||!cu)return;
   try{
@@ -436,7 +435,7 @@ function markVoted(id){
   });
 }
 
-window.showScreen=function(id){
+function showScreen(id){
   ['login-screen','signup-screen'].forEach(s=>document.getElementById(s).classList.remove('active'));
   document.getElementById(id).classList.add('active');
 };
@@ -448,7 +447,7 @@ function showAdmin(){
   loadAdmin();
 }
 
-window.doLogin=async function(){
+async function doLogin(){
   const e=document.getElementById('li-email').value.trim();
   const p=document.getElementById('li-pass').value;
   const err=document.getElementById('li-err');
@@ -460,19 +459,19 @@ window.doLogin=async function(){
   catch(ex){err.textContent=ex.code==='auth/invalid-credential'?'Wrong email or password.':'Error: '+ex.message;btn.disabled=false;btn.textContent='Sign In';}
 };
 
-window.doLogout=async function(){
+async function doLogout(){
   await signOut(auth);
   document.getElementById('li-btn').disabled=false;
   document.getElementById('li-btn').textContent='Sign In';
   document.getElementById('li-err').textContent='';
 };
 
-window.setVS=async function(state){
+async function setVS(state){
   try{await setDoc(doc(db,'config','voting'),{state},{merge:true});}
   catch(e){alert('Error: '+e.message);}
 };
 
-window.declareWinner=async function(){
+async function declareWinner(){
   const mk=monthKey();
   const ml=monthLabel();
   const snap=await getDocs(collection(db,'votes',mk,'ballots'));
@@ -498,7 +497,7 @@ window.declareWinner=async function(){
   loadAdmin();
 };
 
-window.resetVotes=async function(){
+async function resetVotes(){
   if(!confirm('Reset voting state for next month? Votes in Firestore are kept for records.'))return;
   await setDoc(doc(db,'config','voting'),{state:'auto'},{merge:true});
   showMo('↺','Reset Done','Voting state reset. Ready for next month.');
@@ -510,7 +509,7 @@ function updBadge(){
   document.getElementById('vsb-wrap').innerHTML=`<div class="vsb ${cl}">${lb}</div>`;
 }
 
-window.loadAdmin=async function(){
+async function loadAdmin(){
   updBadge();
   const mk=monthKey();
   const tb=document.getElementById('tb');
@@ -562,9 +561,20 @@ function showMo(ico,ttl,bdy){
   document.getElementById('mbdy').textContent=bdy;
   document.getElementById('mo').classList.add('show');
 }
-window.closeMo=function(){document.getElementById('mo').classList.remove('show');};
+function closeMo(){document.getElementById('mo').classList.remove('show');};
 document.getElementById('mo').addEventListener('click',e=>{if(e.target===e.currentTarget)window.closeMo();});
 ['li-email','li-pass'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{if(e.key==='Enter')window.doLogin();}));
+
+window.doLogin   = doLogin;
+window.doLogout  = doLogout;
+window.setVS     = setVS;
+window.declareWinner = declareWinner;
+window.resetVotes = resetVotes;
+window.loadAdmin  = loadAdmin;
+window.closeMo   = closeMo;
+window._pick     = _pick;
+window.submitVote = submitVote;
+window.showScreen = showScreen;
 </script>
 </body>
 </html>
