@@ -139,6 +139,7 @@ tr:hover td{background:rgba(255,255,255,.018)}
 .tc2{min-width:28px;text-align:right;color:var(--muted);font-size:.78rem}
 footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
 footer span{color:var(--gold)}
+.disclaimer{margin-top:8px;font-size:.72rem;color:#555;font-style:italic;max-width:600px;margin-left:auto;margin-right:auto;line-height:1.5}
 </style>
 </head>
 <body>
@@ -213,7 +214,10 @@ footer span{color:var(--gold)}
       <p class="vn" id="vn">Select a candidate to cast your vote.</p>
     </div>
   </main>
-  <footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission</p></footer>
+  <footer>
+    <p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission</p>
+    <p class="disclaimer">Bazsinia is a fictional country created for entertainment among friends. This site is not affiliated with any real political party or organisation.</p>
+  </footer>
 </div>
 
 <div id="as">
@@ -563,8 +567,6 @@ function showMo(ico,ttl,bdy){
   document.getElementById('mo').classList.add('show');
 }
 function closeMo(){document.getElementById('mo').classList.remove('show');};
-
-
 
 // Attach all event listeners after DOM is ready
 document.getElementById('li-btn').addEventListener('click', doLogin);
