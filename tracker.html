@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — Election Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--fidesz:#FF7A00;--fidesz-dim:rgba(255,122,0,0.12);--tisza:#3A8FE8;--tisza-dim:rgba(58,143,232,0.12)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+header{position:relative;text-align:center;padding:50px 20px 36px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:26px;margin-bottom:14px;animation:sg 3s ease-in-out infinite alternate}
+@keyframes sg{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hsub{margin-top:8px;font-style:italic;font-size:.95rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+.live-badge{display:inline-flex;align-items:center;gap:6px;margin-top:14px;padding:4px 14px;border-radius:2px;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;background:rgba(42,92,63,.15);border:1px solid #2A5C3F;color:#7BC49A}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#7BC49A;animation:ld 1s ease-in-out infinite alternate}
+@keyframes ld{from{opacity:1}to{opacity:.2}}
+main{max-width:900px;margin:0 auto;padding:44px 20px 70px}
+
+/* MONTH SELECTOR */
+.month-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px}
+.month-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--gold-light)}
+.month-nav{display:flex;gap:8px}
+.mnav-btn{padding:5px 14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.82rem;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s}
+.mnav-btn:hover{border-color:var(--gold);color:var(--gold)}
+.mnav-btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* TOTAL COUNT */
+.total-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.total-label{font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.total-num{font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--gold-light)}
+.winner-card{display:flex;align-items:center;gap:14px}
+.winner-crown{font-size:2rem}
+.winner-name{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light)}
+.winner-sub{font-size:.8rem;color:var(--muted);font-style:italic;margin-top:2px}
+
+/* PARTY SPLIT */
+.party-split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:32px}
+.party-box{background:var(--panel);border-radius:4px;padding:18px 20px}
+.party-box.f{border:1px solid rgba(255,122,0,.35)}
+.party-box.t{border:1px solid rgba(58,143,232,.35)}
+.party-box-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+.party-box-title.f{color:var(--fidesz)}
+.party-box-title.t{color:var(--tisza)}
+.party-box-pct{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700}
+.party-box-pct.f{color:var(--fidesz)}
+.party-box-pct.t{color:var(--tisza)}
+.party-box-votes{font-size:.82rem;color:var(--muted);margin-top:2px}
+.party-bar-wrap{height:8px;background:#222;border-radius:4px;margin-top:12px;overflow:hidden;position:relative}
+.party-bar-f{height:100%;border-radius:4px 0 0 4px;transition:width .8s;background:var(--fidesz);float:left}
+.party-bar-t{height:100%;border-radius:0 4px 4px 0;transition:width .8s;background:var(--tisza);float:right}
+
+/* COMBINED BAR */
+.combined-bar-wrap{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:18px 22px;margin-bottom:32px}
+.cb-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+.cb-bar{height:28px;background:#222;border-radius:4px;overflow:hidden;display:flex;margin-bottom:8px}
+.cb-f{height:100%;background:var(--fidesz);transition:width .8s;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#000;font-weight:700;overflow:hidden;white-space:nowrap}
+.cb-t{height:100%;background:var(--tisza);transition:width .8s;display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#fff;font-weight:700;overflow:hidden;white-space:nowrap}
+.cb-labels{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+
+/* SECTION */
+.stl{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:18px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+
+/* CANDIDATE ROWS */
+.cand-list{display:grid;gap:10px;margin-bottom:36px}
+.cand-row{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:14px 18px;position:relative;overflow:hidden}
+.cand-row.leading{border-color:var(--gold)}
+.cand-row-bg{position:absolute;top:0;left:0;height:100%;opacity:.06;transition:width .8s;border-radius:4px}
+.cand-row-bg.f{background:var(--fidesz)}
+.cand-row-bg.t{background:var(--tisza)}
+.cand-row-inner{position:relative;display:flex;align-items:center;gap:14px}
+.cand-poster{width:40px;height:52px;object-fit:cover;border-radius:2px;border:1px solid var(--border);background:#1a1a1a;flex-shrink:0}
+.cand-poster-ph{width:40px;height:52px;border-radius:2px;border:1px solid var(--border);background:#1a1a1a;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#444;text-transform:uppercase;letter-spacing:.05em;text-align:center}
+.cand-info{flex:1;min-width:0}
+.cand-name-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+.cand-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700}
+.cand-party-badge{font-size:.62rem;padding:2px 7px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;flex-shrink:0}
+.cpb-f{background:var(--fidesz-dim);color:var(--fidesz);border:1px solid rgba(255,122,0,.3)}
+.cpb-t{background:var(--tisza-dim);color:var(--tisza);border:1px solid rgba(58,143,232,.3)}
+.lead-badge{font-size:.6rem;padding:2px 7px;border-radius:2px;background:rgba(201,168,76,.15);border:1px solid var(--gold);color:var(--gold-light);letter-spacing:.1em;text-transform:uppercase}
+.cand-bar-wrap{height:5px;background:#222;border-radius:3px;overflow:hidden;margin-top:4px}
+.cand-bar{height:100%;border-radius:3px;transition:width .8s}
+.cand-bar.f{background:var(--fidesz)}
+.cand-bar.t{background:var(--tisza)}
+.cand-right{text-align:right;flex-shrink:0;min-width:70px}
+.cand-pct{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700}
+.cand-pct.f{color:var(--fidesz)}
+.cand-pct.t{color:var(--tisza)}
+.cand-votes{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+/* NO VOTES */
+.no-votes{text-align:center;padding:40px 20px;color:var(--muted);font-style:italic}
+
+/* LOADING */
+.loading{text-align:center;padding:60px;color:var(--muted);font-style:italic}
+
+/* REFRESH */
+.refresh-row{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-bottom:20px}
+.refresh-btn{padding:5px 14px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.8rem;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s}
+.refresh-btn:hover{border-color:var(--gold);color:var(--gold)}
+.last-updated{font-size:.75rem;color:var(--muted);font-style:italic}
+
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+
+@media(max-width:500px){
+  .party-split{grid-template-columns:1fr}
+  .cand-right{min-width:54px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <a class="nlink" href="index.html">🗳 Vote</a>
+    <a class="nlink" href="public.html">🏛 Bazsinia</a>
+    <a class="nlink" href="city.html">🏙 City</a>
+  </div>
+  <div class="seal">📊</div>
+  <h1>Election Tracker</h1>
+  <p class="hsub">Live vote counts — updated in real time</p>
+  <div class="live-badge"><span class="live-dot"></span> Live</div>
+</header>
+
+<main>
+  <div id="tracker-wrap"><div class="loading">Loading results…</div></div>
+</main>
+
+<footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Central Electoral Commission &nbsp;·&nbsp; Tracker</p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, getDocs, onSnapshot, doc, getDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const db = getFirestore(app);
+
+const CANDIDATES = [
+  {id:'f1',name:'Kiss Balázs',    party:'fidesz',img:'poster_f1.jpg'},
+  {id:'f2',name:'Laki Dion',      party:'fidesz',img:'poster_f2.jpg'},
+  {id:'f3',name:'Arany János',    party:'fidesz',img:'poster_f3.jpg'},
+  {id:'f4',name:'Marczali Johanna',party:'fidesz',img:'poster_f4.jpg'},
+  {id:'f5',name:'Marczali Léna',  party:'fidesz',img:'poster_f5.jpg'},
+  {id:'f6',name:'Kiss Tamás',     party:'fidesz',img:'poster_f6.jpg'},
+  {id:'f7',name:'Kele Péter',     party:'fidesz',img:'poster_f7.jpg'},
+  {id:'t1',name:'Búzás Benedek',  party:'tisza', img:'poster_t1.jpg'},
+  {id:'t2',name:'Ronald Marcell', party:'tisza', img:'poster_t2.jpg'},
+];
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+let currentYear  = new Date().getFullYear();
+let currentMonth = new Date().getMonth() + 1;
+let availableMonths = [];
+let lastUpdated = null;
+
+async function discoverMonths() {
+  const snap = await getDocs(collection(db, 'votes'));
+  availableMonths = snap.docs.map(d => d.id).sort();
+  const mk = `${currentYear}-${currentMonth}`;
+  if (!availableMonths.includes(mk) && availableMonths.length > 0) {
+    const last = availableMonths[availableMonths.length - 1];
+    const [y,m] = last.split('-').map(Number);
+    currentYear = y; currentMonth = m;
+  }
+}
+
+function monthKey() { return `${currentYear}-${currentMonth}`; }
+function monthLabel() { return `${MONTH_NAMES[currentMonth-1]} ${currentYear}`; }
+
+async function loadResults() {
+  const mk = monthKey();
+  const snap = await getDocs(collection(db,'votes',mk,'ballots'));
+  const tally = {};
+  CANDIDATES.forEach(c => tally[c.id] = 0);
+  snap.forEach(d => { const v = d.data(); if (v.votedFor && tally[v.votedFor] !== undefined) tally[v.votedFor]++; });
+  const presSnap = await getDoc(doc(db,'presidents',mk));
+  const declared = presSnap.exists() ? presSnap.data() : null;
+  lastUpdated = new Date();
+  render(tally, declared);
+}
+
+function render(tally, declared) {
+  const total = Object.values(tally).reduce((a,b)=>a+b,0);
+  const fideszTotal = CANDIDATES.filter(c=>c.party==='fidesz').reduce((a,c)=>a+tally[c.id],0);
+  const tiszaTotal  = CANDIDATES.filter(c=>c.party==='tisza').reduce((a,c)=>a+tally[c.id],0);
+  const fideszPct = total>0 ? Math.round((fideszTotal/total)*100) : 0;
+  const tiszaPct  = total>0 ? Math.round((tiszaTotal/total)*100) : 0;
+
+  const sorted = [...CANDIDATES].sort((a,b)=>tally[b.id]-tally[a.id]);
+  const leader = sorted[0] && tally[sorted[0].id] > 0 ? sorted[0] : null;
+
+  const midx = availableMonths.indexOf(monthKey());
+
+  let html = `
+    <div class="month-bar">
+      <div class="month-title">📅 ${monthLabel()}</div>
+      <div class="month-nav">
+        <button class="mnav-btn" id="prev-btn" ${midx<=0?'disabled':''} onclick="prevMonth()">◀ Previous</button>
+        <button class="mnav-btn" id="next-btn" ${midx>=availableMonths.length-1?'disabled':''} onclick="nextMonth()">Next ▶</button>
+      </div>
+    </div>
+
+    <div class="refresh-row">
+      <span class="last-updated">Updated: ${lastUpdated ? lastUpdated.toLocaleTimeString('en-GB') : '—'}</span>
+      <button class="refresh-btn" onclick="loadResults()">↻ Refresh</button>
+    </div>`;
+
+  if (total === 0) {
+    html += `<div class="no-votes">No votes have been cast yet for ${monthLabel()}. Check back on voting day!</div>`;
+    document.getElementById('tracker-wrap').innerHTML = html;
+    return;
+  }
+
+  // Total + winner card
+  html += `<div class="total-card">
+    <div>
+      <div class="total-label">Total Votes Cast</div>
+      <div class="total-num">${total}</div>
+    </div>`;
+  if (declared) {
+    html += `<div class="winner-card">
+      <span class="winner-crown">👑</span>
+      <div>
+        <div class="winner-name">${declared.name}</div>
+        <div class="winner-sub">Declared President for ${declared.month}</div>
+      </div>
+    </div>`;
+  } else if (leader) {
+    html += `<div class="winner-card">
+      <span class="winner-crown">📊</span>
+      <div>
+        <div class="winner-name">${leader.name}</div>
+        <div class="winner-sub">Currently leading — not yet declared</div>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+
+  // Combined party bar
+  html += `<div class="combined-bar-wrap">
+    <div class="cb-title">Party Split</div>
+    <div class="cb-bar">
+      <div class="cb-f" style="width:${fideszPct}%">${fideszPct>8?'Fidesz '+fideszPct+'%':''}</div>
+      <div class="cb-t" style="width:${tiszaPct}%">${tiszaPct>8?'Tisza '+tiszaPct+'%':''}</div>
+    </div>
+    <div class="cb-labels"><span style="color:var(--fidesz)">Fidesz</span><span style="color:var(--tisza)">Tisza</span></div>
+  </div>`;
+
+  // Party boxes
+  html += `<div class="party-split">
+    <div class="party-box f">
+      <div class="party-box-title f">Fidesz</div>
+      <div class="party-box-pct f">${fideszPct}%</div>
+      <div class="party-box-votes">${fideszTotal} vote${fideszTotal!==1?'s':''}</div>
+      <div class="party-bar-wrap"><div class="party-bar-f" style="width:${fideszPct}%"></div></div>
+    </div>
+    <div class="party-box t">
+      <div class="party-box-title t">Tisza</div>
+      <div class="party-box-pct t">${tiszaPct}%</div>
+      <div class="party-box-votes">${tiszaTotal} vote${tiszaTotal!==1?'s':''}</div>
+      <div class="party-bar-wrap"><div class="party-bar-t" style="width:${tiszaPct}%"></div></div>
+    </div>
+  </div>`;
+
+  // Individual candidate results
+  const maxVotes = tally[sorted[0].id] || 1;
+  html += `<div class="stl">Individual Results</div><div class="cand-list">`;
+  sorted.forEach((c, i) => {
+    const votes = tally[c.id];
+    const pct   = total > 0 ? Math.round((votes/total)*100) : 0;
+    const barW  = Math.round((votes/maxVotes)*100);
+    const cl    = c.party === 'fidesz' ? 'f' : 't';
+    const isLead = i === 0 && votes > 0;
+    html += `<div class="cand-row${isLead?' leading':''}">
+      <div class="cand-row-bg ${cl}" style="width:${barW}%"></div>
+      <div class="cand-row-inner">
+        <img class="cand-poster" src="${c.img}" alt="${c.name}" onerror="this.outerHTML='<div class=cand-poster-ph>No Photo</div>'">
+        <div class="cand-info">
+          <div class="cand-name-row">
+            <span class="cand-name">${c.name}</span>
+            <span class="cand-party-badge cpb-${cl}">${c.party==='fidesz'?'Fidesz':'Tisza'}</span>
+            ${isLead?'<span class="lead-badge">Leading</span>':''}
+          </div>
+          <div class="cand-bar-wrap"><div class="cand-bar ${cl}" style="width:${barW}%"></div></div>
+        </div>
+        <div class="cand-right">
+          <div class="cand-pct ${cl}">${pct}%</div>
+          <div class="cand-votes">${votes} vote${votes!==1?'s':''}</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('tracker-wrap').innerHTML = html;
+}
+
+window.prevMonth = function() {
+  const idx = availableMonths.indexOf(monthKey());
+  if (idx > 0) {
+    const [y,m] = availableMonths[idx-1].split('-').map(Number);
+    currentYear=y; currentMonth=m;
+    loadResults();
+  }
+};
+window.nextMonth = function() {
+  const idx = availableMonths.indexOf(monthKey());
+  if (idx < availableMonths.length-1) {
+    const [y,m] = availableMonths[idx+1].split('-').map(Number);
+    currentYear=y; currentMonth=m;
+    loadResults();
+  }
+};
+window.loadResults = loadResults;
+
+// Live updates
+function setupLive() {
+  const mk = monthKey();
+  onSnapshot(collection(db,'votes',mk,'ballots'), async () => {
+    await loadResults();
+  });
+}
+
+async function init() {
+  await discoverMonths();
+  await loadResults();
+  setupLive();
+}
+init();
+</script>
+</body>
+</html>
