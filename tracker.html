@@ -187,16 +187,28 @@ function monthLabel() { return `${MONTH_NAMES[currentMonth-1]} ${currentYear}`; 
 
 async function loadResults() {
   const mk = monthKey();
-  const snap = await getDocs(collection(db,'votes',mk,'ballots'));
+
+  // PUBLIC RESULTS DOCUMENT
+  const resultsSnap = await getDoc(doc(db, 'results', mk));
+
   const tally = {};
+
+  // initialize all candidates to 0
   CANDIDATES.forEach(c => tally[c.id] = 0);
-  snap.forEach(d => { const v = d.data(); if (v.votedFor && tally[v.votedFor] !== undefined) tally[v.votedFor]++; });
-  const presSnap = await getDoc(doc(db,'presidents',mk));
+
+  // load public results
+  if (resultsSnap.exists()) {
+    Object.assign(tally, resultsSnap.data());
+  }
+
+  // president declaration
+  const presSnap = await getDoc(doc(db, 'presidents', mk));
   const declared = presSnap.exists() ? presSnap.data() : null;
+
   lastUpdated = new Date();
+
   render(tally, declared);
 }
-
 function render(tally, declared) {
   const total = Object.values(tally).reduce((a,b)=>a+b,0);
   const fideszTotal = CANDIDATES.filter(c=>c.party==='fidesz').reduce((a,c)=>a+tally[c.id],0);
@@ -334,7 +346,8 @@ window.loadResults = loadResults;
 // Live updates
 function setupLive() {
   const mk = monthKey();
-  onSnapshot(collection(db,'votes',mk,'ballots'), async () => {
+
+  onSnapshot(doc(db, 'results', mk), async () => {
     await loadResults();
   });
 }
