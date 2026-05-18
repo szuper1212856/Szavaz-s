@@ -149,6 +149,7 @@ footer span{color:var(--gold)}
     <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
   </div>
   <h1>🏙 City of Bazsinia</h1>
+  <p class="hsub">Persistent city — every decision shapes the future</p>
 </header>
 
 <div class="pres-bar" id="pres-bar">Loading city status…</div>
@@ -240,7 +241,8 @@ const ADMIN_EMAIL     = "admin@bazsinia.com";
 const DEFAULT_CITY = {
   budget:70, happiness:65, crime:30, health:60, education:55, infrastructure:50,
   actionsUsedThisMonth:[], lastActionMonth:'',
-  presidentName:'No President Yet'
+  presidentName:'No President Yet',
+  atWar:false, warWith:''
 };
 
 const ACTIONS = [
@@ -316,6 +318,27 @@ const ACTIONS = [
     effects:{budget:-10, happiness:+12, infrastructure:+5},
     effectLabels:[{l:'-Budget',t:'neg'},{l:'+Happiness',t:'pos'},{l:'+Infrastructure',t:'pos'}]
   },
+  {
+    id:'declare_war', icon:'⚔️', title:'Declare War',
+    desc:'Declare war on a neighbouring country. Military spending surges, but victory could bring glory and resources.',
+    effects:{budget:-25, happiness:-10, crime:+10},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'-Happiness',t:'neg'},{l:'+Crime',t:'neg'}],
+    isWar:true
+  },
+  {
+    id:'peace_treaty', icon:'🕊️', title:'Sign Peace Treaty',
+    desc:'End the current conflict through diplomacy. Spending stops but no glory is gained.',
+    effects:{budget:+10, happiness:+15},
+    effectLabels:[{l:'+Budget',t:'pos'},{l:'+Happiness',t:'pos'}],
+    isWar:true, isPeace:true
+  },
+  {
+    id:'military_fund', icon:'🪖', title:'Fund the Military',
+    desc:'Invest in weapons and training. Strengthens defence but drains the treasury.',
+    effects:{budget:-20, happiness:-5, crime:-5},
+    effectLabels:[{l:'-Budget',t:'neg'},{l:'-Happiness',t:'neg'},{l:'-Crime',t:'pos'}],
+    isWar:true
+  },
 ];
 
 const RANDOM_EVENTS = [
@@ -329,6 +352,10 @@ const RANDOM_EVENTS = [
   {id:'sports',icon:'🏆',title:'Bazsinia Wins!',desc:'The national football team won the championship. City morale is sky high!',type:'good',effects:{happiness:+20}},
   {id:'drought',icon:'☀️',title:'Summer Drought',desc:'Water shortages are causing tension across the city districts.',type:'warning',effects:{happiness:-10,health:-8}},
   {id:'tech',icon:'💡',title:'Tech Investment',desc:'A major tech company has chosen Bazsinia for their new headquarters.',type:'good',effects:{budget:+18,education:+8,happiness:+10}},
+  {id:'invasion',icon:'🚨',title:'Bazsinia is Under Attack!',desc:'A neighbouring country has launched a surprise military invasion. The president must respond immediately.',type:'crisis',effects:{budget:-20,happiness:-20,infrastructure:-15,crime:+15},isWarEvent:true},
+  {id:'border_tension',icon:'⚠️',title:'Border Tensions Rising',desc:'Diplomatic relations with a neighbouring country have broken down. Military forces are gathering at the border.',type:'warning',effects:{happiness:-8,budget:-5},isWarEvent:true},
+  {id:'war_victory',icon:'🏅',title:'Military Victory!',desc:'Bazsinia's armed forces have secured a decisive victory on the battlefield. National pride soars.',type:'good',effects:{happiness:+25,budget:+10},isWarEvent:true},
+  {id:'ceasefire',icon:'🤝',title:'Ceasefire Declared',desc:'Both sides have agreed to a temporary ceasefire. The fighting has paused but the conflict is unresolved.',type:'info',effects:{happiness:+8},isWarEvent:true},
 ];
 
 const POLL_OPTIONS = ['The president is doing a great job','More investment in healthcare needed','Lower taxes immediately','Focus on reducing crime','Better schools are the priority'];
@@ -386,8 +413,32 @@ async function loadUserInteractions() {
 
 function clamp(v) { return Math.max(0, Math.min(100, Math.round(v))); }
 
+const COUNTRIES = ['Veszprém Republic','The Kingdom of Pécsland','Greater Debrecenia','The Miskolc Federation','The Free State of Győr','The Sultanate of Kaposvár','Egerland'];
+
+function getWarCountry() {
+  const seed = Math.floor(Date.now() / (1000*60*60*24));
+  return COUNTRIES[seed % COUNTRIES.length];
+}
+
+function renderWarBanner() {
+  let el = document.getElementById('war-banner');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'war-banner';
+    el.style.cssText = 'background:rgba(139,26,26,.25);border:1px solid #8B1A1A;border-radius:4px;padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px;';
+    document.querySelector('main').insertBefore(el, document.querySelector('main').firstChild);
+  }
+  if (cityState.atWar) {
+    el.style.display = 'flex';
+    el.innerHTML = `<span style="font-size:1.8rem">⚔️</span><div><div style="font-family:'Playfair Display',serif;color:#FF6666;font-size:1rem;margin-bottom:3px">Bazsinia is at WAR with ${cityState.warWith||'a foreign power'}</div><div style="font-size:.82rem;color:#C07070;font-style:italic">The president must manage military actions. Citizens are suffering. Sign a peace treaty to end the conflict.</div></div>`;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
 function renderStats() {
   if (!cityState) return;
+  renderWarBanner();
   const stats = [
     {key:'budget',id:'budget',label:'B$'},
     {key:'happiness',id:'happy',label:'%'},
@@ -433,11 +484,19 @@ function renderPresidentPanel() {
     badgeEl.innerHTML = `<div class="actions-remaining ar-none">No actions remaining this month</div>`;
   }
   document.getElementById('actions-left-label').textContent = `${remaining}/3 remaining`;
-  document.getElementById('actions-grid').innerHTML = ACTIONS.map(a => {
+  const atWar = cityState.atWar || false;
+  const visibleActions = ACTIONS.filter(a => {
+    if (a.id === 'declare_war') return !atWar;
+    if (a.id === 'peace_treaty') return atWar;
+    if (a.id === 'military_fund') return atWar;
+    return true;
+  });
+  document.getElementById('actions-grid').innerHTML = visibleActions.map(a => {
     const isUsed = used.includes(a.id);
     const disabled = isUsed || remaining === 0;
-    return `<div class="action-card">
-      <div class="action-title">${a.icon} ${a.title}</div>
+    const warTag = a.isWar ? `<span style="font-size:.65rem;padding:2px 7px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070;border-radius:10px;margin-left:6px">WAR</span>` : '';
+    return `<div class="action-card" style="${a.isWar?'border-color:rgba(139,26,26,.4)':''}">
+      <div class="action-title">${a.icon} ${a.title}${warTag}</div>
       <div class="action-desc">${a.desc}</div>
       <div class="action-effects">${a.effectLabels.map(e=>`<span class="eff ${e.t}">${e.l}</span>`).join('')}</div>
       <button class="act-btn${isUsed?' used':''}" ${disabled?'disabled':''} onclick="window.doAction('${a.id}')">${isUsed?'✓ Done':'Execute'}</button>
@@ -466,6 +525,18 @@ window.doAction = async function(actionId) {
     updates[k] = clamp((cityState[k] || 0) + action.effects[k]);
   });
 
+  if (actionId === 'declare_war') {
+    const enemy = COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];
+    updates.atWar = true;
+    updates.warWith = enemy;
+    await addDoc(collection(db,'city','log'), {text:`⚔️ Bazsinia declared war on ${enemy}!`,type:'crisis',ts:serverTimestamp()});
+  }
+  if (actionId === 'peace_treaty') {
+    updates.atWar = false;
+    updates.warWith = '';
+    await addDoc(collection(db,'city','log'), {text:`🕊️ Peace treaty signed. The war is over.`,type:'good',ts:serverTimestamp()});
+  }
+
   await updateDoc(doc(db,'city','state'), updates);
   cityState = {...cityState, ...updates};
 
@@ -489,8 +560,29 @@ window.doAction = async function(actionId) {
 };
 
 async function checkAndTriggerRandomEvent() {
+  // 1 in 50 chance of a war event
+  if (Math.random() < (1/50)) {
+    const warEvents = RANDOM_EVENTS.filter(e => e.isWarEvent);
+    const event = warEvents[Math.floor(Math.random() * warEvents.length)];
+    const updates = {};
+    Object.keys(event.effects).forEach(k => {
+      updates['prev_'+k] = cityState[k] || 0;
+      updates[k] = clamp((cityState[k]||0) + event.effects[k]);
+    });
+    if (event.id === 'invasion' && !cityState.atWar) {
+      const enemy = COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];
+      updates.atWar = true;
+      updates.warWith = enemy;
+    }
+    await updateDoc(doc(db,'city','state'), updates);
+    await addDoc(collection(db,'city','events'), {icon:event.icon,title:event.title,desc:event.desc,type:event.type,ts:serverTimestamp()});
+    await addDoc(collection(db,'city','log'), {text:`${event.icon} WAR EVENT: ${event.title}`,type:'crisis',ts:serverTimestamp()});
+    await loadEvents(); await loadLog();
+    return;
+  }
   if (Math.random() > 0.35) return;
-  const event = RANDOM_EVENTS[Math.floor(Math.random() * RANDOM_EVENTS.length)];
+  const nonWarEvents = RANDOM_EVENTS.filter(e => !e.isWarEvent);
+  const event = nonWarEvents[Math.floor(Math.random() * nonWarEvents.length)];
   const updates = {};
   Object.keys(event.effects).forEach(k => {
     updates['prev_'+k] = cityState[k] || 0;
