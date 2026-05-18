@@ -171,15 +171,13 @@ let currentMonth = new Date().getMonth() + 1;
 let availableMonths = [];
 let lastUpdated = null;
 
+// FIX: No longer reads the votes collection list (which requires list permission).
+// Instead, derives the current month locally and builds the array directly.
 async function discoverMonths() {
-  const snap = await getDocs(collection(db, 'votes'));
-  availableMonths = snap.docs.map(d => d.id).sort();
-  const mk = `${currentYear}-${currentMonth}`;
-  if (!availableMonths.includes(mk) && availableMonths.length > 0) {
-    const last = availableMonths[availableMonths.length - 1];
-    const [y,m] = last.split('-').map(Number);
-    currentYear = y; currentMonth = m;
-  }
+  const now = new Date();
+  currentYear  = now.getFullYear();
+  currentMonth = now.getMonth() + 1;
+  availableMonths = [`${currentYear}-${currentMonth}`];
 }
 
 function monthKey() { return `${currentYear}-${currentMonth}`; }
