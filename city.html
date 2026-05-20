@@ -439,6 +439,7 @@ onAuthStateChanged(auth, async user => {
   setupRealtimeListener();
   await loadUserInteractions();
   renderAll();
+  initTaxAfterRender();
   await loadEvents();
   await loadLog();
 });
@@ -553,6 +554,7 @@ function renderPresidentPanel() {
     if (a.id === 'military_fund') return atWar;
     return true;
   });
+  initTaxSlider();
   document.getElementById('actions-grid').innerHTML = visibleActions.map(a => {
     const isUsed = used.includes(a.id);
     const disabled = isUsed || remaining === 0;
@@ -572,6 +574,7 @@ function renderAll() {
   checkRevolt();
   renderPetition();
   renderPoll();
+  if (isPresident) initTaxSlider();
 }
 
 window.doAction = async function(actionId) {
@@ -902,10 +905,7 @@ window.applyAiLaw = async function() {
   await loadEvents(); await loadLog();
 };
 
-// patch renderAll to also init tax slider
-const _origRenderAll = renderAll;
-function renderAll() {
-  _origRenderAll();
+function initTaxAfterRender() {
   if (isPresident) initTaxSlider();
 }
 </script>
