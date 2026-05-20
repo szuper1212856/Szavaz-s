@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — Community</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--green:#2A7A4F;--red:#8B1A1A;--blue:#1A4A8B}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+
+/* HEADER */
+header{position:relative;text-align:center;padding:50px 20px 36px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:26px;margin-bottom:14px;animation:sg 3s ease-in-out infinite alternate}
+@keyframes sg{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.hsub{margin-top:8px;font-style:italic;font-size:.95rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px;align-items:center}
+.uname{font-size:.78rem;color:var(--muted);font-style:italic}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+
+/* LAYOUT */
+main{max-width:1100px;margin:0 auto;padding:36px 20px 70px;display:grid;grid-template-columns:1fr 340px;gap:28px}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+
+/* FEED */
+.feed{display:grid;gap:18px}
+
+/* COMPOSE BOX */
+.compose{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 22px}
+.compose-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:18px}
+.ctab{padding:8px 16px;font-family:'EB Garamond',serif;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:none;background:transparent;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s}
+.ctab:hover{color:var(--text)}
+.ctab.active{color:var(--gold-light);border-bottom-color:var(--gold)}
+.cform{display:none}.cform.active{display:block}
+.fg{margin-bottom:12px}
+.fg label{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fg input,.fg textarea{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.95rem;padding:9px 12px;border-radius:2px;outline:none;transition:border-color .2s;resize:vertical}
+.fg input:focus,.fg textarea:focus{border-color:var(--gold)}
+.fg textarea{min-height:80px}
+.fg-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.post-btn{padding:9px 24px;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s}
+.post-btn:hover:not(:disabled){background-position:100%}
+.post-btn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.post-msg{font-size:.8rem;font-style:italic;color:var(--muted);margin-top:8px;min-height:16px}
+.guest-note{text-align:center;padding:20px;color:var(--muted);font-style:italic;font-size:.9rem}
+.guest-note a{color:var(--gold);text-decoration:none}
+
+/* POST CARDS */
+.post-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:border-color .2s}
+.post-card:hover{border-color:rgba(201,168,76,.25)}
+.post-header{padding:14px 18px 0;display:flex;align-items:center;gap:10px}
+.avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:var(--gold);flex-shrink:0;font-family:'Playfair Display',serif}
+.post-meta{flex:1}
+.post-author{font-size:.88rem;font-weight:600;color:var(--text)}
+.post-time{font-size:.72rem;color:var(--muted);font-style:italic}
+.post-type-badge{font-size:.62rem;padding:2px 8px;border-radius:2px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;flex-shrink:0}
+.ptb-post{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.ptb-petition{background:rgba(139,26,26,.15);color:#C07070;border:1px solid #8B1A1A}
+.ptb-debate{background:rgba(58,143,232,.12);color:#3A8FE8;border:1px solid rgba(58,143,232,.3)}
+.ptb-doc{background:rgba(42,122,79,.15);color:#7BC49A;border:1px solid rgba(42,122,79,.3)}
+.delete-btn{padding:3px 8px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:.7rem;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s;flex-shrink:0}
+.delete-btn:hover{border-color:#8B1A1A;color:#C07070}
+
+.post-body{padding:12px 18px 14px}
+.post-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold-light);margin-bottom:6px}
+.post-text{font-size:.92rem;line-height:1.65;color:var(--text);white-space:pre-wrap}
+
+/* PETITION */
+.petition-section{padding:0 18px 14px}
+.pet-goal-row{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:6px}
+.pet-bar-wrap{height:7px;background:#222;border-radius:4px;overflow:hidden;margin-bottom:10px}
+.pet-bar{height:100%;background:linear-gradient(90deg,#8B1A1A,#C07070);border-radius:4px;transition:width .5s}
+.pet-bar.complete{background:linear-gradient(90deg,#2A7A4F,#7BC49A)}
+.sign-btn{padding:7px 18px;font-family:'EB Garamond',serif;font-size:.85rem;cursor:pointer;border-radius:2px;background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070;transition:background .2s}
+.sign-btn:hover:not(:disabled){background:rgba(139,26,26,.4)}
+.sign-btn.signed{background:rgba(42,122,79,.2);border-color:#2A7A4F;color:#7BC49A;cursor:not-allowed}
+.sign-btn:disabled{opacity:.5;cursor:not-allowed}
+.pet-complete-badge{display:inline-block;padding:3px 10px;background:rgba(42,122,79,.2);border:1px solid #2A7A4F;color:#7BC49A;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;margin-left:8px}
+
+/* DOC CARD */
+.doc-link-card{margin:0 18px 14px;padding:12px 14px;background:#0d0d0d;border:1px solid var(--border);border-radius:2px;display:flex;align-items:center;gap:12px;text-decoration:none;transition:border-color .2s}
+.doc-link-card:hover{border-color:var(--gold)}
+.doc-icon{font-size:1.6rem;flex-shrink:0}
+.doc-info{flex:1;min-width:0}
+.doc-title{font-size:.88rem;color:var(--gold-light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-url{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.doc-arrow{color:var(--muted);font-size:.9rem;flex-shrink:0}
+
+/* REACTIONS + COMMENTS */
+.post-actions{padding:0 18px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:10px;margin-top:2px}
+.react-btn{padding:4px 11px;background:#111;border:1px solid var(--border);color:var(--text);font-size:.82rem;cursor:pointer;border-radius:16px;transition:border-color .2s,background .2s}
+.react-btn:hover{border-color:var(--gold)}
+.react-btn.reacted{border-color:var(--gold);background:rgba(201,168,76,.1);color:var(--gold-light)}
+.comment-toggle-btn{margin-left:auto;padding:4px 11px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.78rem;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s}
+.comment-toggle-btn:hover{border-color:var(--gold);color:var(--gold)}
+.comments-section{display:none;padding:12px 18px 14px;border-top:1px solid var(--border);margin-top:10px}
+.comments-section.open{display:block}
+.comment-item{padding:8px 0;border-bottom:1px solid rgba(42,42,42,.5)}
+.comment-item:last-of-type{border-bottom:none}
+.comment-author{font-size:.72rem;color:var(--gold);letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.comment-text{font-size:.87rem;line-height:1.5}
+.comment-input-row{display:flex;gap:8px;margin-top:10px}
+.comment-inp{flex:1;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.88rem;padding:7px 11px;border-radius:2px;outline:none;transition:border-color .2s}
+.comment-inp:focus{border-color:var(--gold)}
+.comment-send{padding:7px 14px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.8rem;cursor:pointer;border-radius:2px;transition:background .2s,color .2s;white-space:nowrap}
+.comment-send:hover{background:var(--gold);color:#000}
+.no-comments{font-size:.82rem;color:var(--muted);font-style:italic}
+
+/* SIDEBAR */
+.sidebar{display:grid;gap:18px;align-content:start}
+.side-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:18px 20px}
+.side-title{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.filter-btns{display:flex;flex-wrap:wrap;gap:6px}
+.filter-btn{padding:5px 12px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.78rem;cursor:pointer;border-radius:2px;transition:all .2s}
+.filter-btn:hover{border-color:var(--gold);color:var(--gold)}
+.filter-btn.active{background:rgba(201,168,76,.1);border-color:var(--gold);color:var(--gold-light)}
+.stats-list{display:grid;gap:8px}
+.stat-row{display:flex;justify-content:space-between;align-items:center;font-size:.88rem}
+.stat-row-label{color:var(--muted)}
+.stat-row-val{font-family:'Playfair Display',serif;color:var(--gold-light);font-size:1rem}
+.top-list{display:grid;gap:8px}
+.top-item{display:flex;align-items:center;gap:8px;font-size:.85rem}
+.top-rank{color:var(--gold);font-family:'Playfair Display',serif;font-size:.9rem;min-width:18px}
+.top-name{flex:1;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top-count{color:var(--muted);font-size:.78rem}
+.empty-feed{text-align:center;padding:40px 20px;color:var(--muted);font-style:italic;background:var(--panel);border:1px solid var(--border);border-radius:4px}
+.load-more-btn{width:100%;padding:10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.85rem;cursor:pointer;border-radius:2px;transition:border-color .2s,color .2s}
+.load-more-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+.post-card.system-post{border-color:rgba(201,168,76,.2);background:rgba(201,168,76,.03)}
+.report-count{font-size:.72rem;color:var(--muted);font-style:italic}
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem;grid-column:1/-1}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <span class="uname" id="uname"></span>
+    <a class="nlink" href="index.html">🗳 Vote</a>
+    <a class="nlink" href="public.html">🏛 Bazsinia</a>
+    <a class="nlink" href="city.html">🏙 City</a>
+    <a class="nlink" href="tracker.html">📊 Tracker</a>
+    <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="seal">💬</div>
+  <h1>Community</h1>
+  <p class="hsub">The public square of Bazsinia — debate, petition, organise</p>
+</header>
+
+<main>
+  <!-- FEED COLUMN -->
+  <div class="feed">
+
+    <!-- COMPOSE -->
+    <div class="compose" id="compose-box">
+      <div class="guest-note" id="guest-note" style="display:none">
+        <a href="index.html">Sign in</a> to post, start petitions, share documents and join debates.
+      </div>
+      <div id="compose-inner">
+        <div class="compose-tabs">
+          <button class="ctab active" onclick="switchCTab(event,'post')">📝 Post</button>
+          <button class="ctab" onclick="switchCTab(event,'petition')">✍️ Petition</button>
+          <button class="ctab" onclick="switchCTab(event,'debate')">🗣 Debate</button>
+          <button class="ctab" onclick="switchCTab(event,'doc')">📄 Document</button>
+        </div>
+
+        <!-- POST FORM -->
+        <div class="cform active" id="cform-post">
+          <div class="fg"><label>What's on your mind?</label><textarea id="p-text" placeholder="Share your thoughts with Bazsinia…"></textarea></div>
+          <button class="post-btn" onclick="submitPost('post')">Post</button>
+          <div class="post-msg" id="p-msg"></div>
+        </div>
+
+        <!-- PETITION FORM -->
+        <div class="cform" id="cform-petition">
+          <div class="fg"><label>Petition Title</label><input type="text" id="pet-title" placeholder="e.g. Ban plastic bags in Bazsinia"/></div>
+          <div class="fg"><label>Description</label><textarea id="pet-desc" placeholder="Explain why this matters and what you want the president to do…"></textarea></div>
+          <div class="fg-row">
+            <div class="fg"><label>Signature Goal</label><input type="number" id="pet-goal" placeholder="e.g. 10" min="2" max="100" value="10"/></div>
+          </div>
+          <button class="post-btn" onclick="submitPost('petition')">Start Petition</button>
+          <div class="post-msg" id="pet-msg"></div>
+        </div>
+
+        <!-- DEBATE FORM -->
+        <div class="cform" id="cform-debate">
+          <div class="fg"><label>Debate Topic</label><input type="text" id="deb-title" placeholder="e.g. Should the voting age be lowered to 14?"/></div>
+          <div class="fg"><label>Your Opening Argument</label><textarea id="deb-text" placeholder="Make your case…"></textarea></div>
+          <button class="post-btn" onclick="submitPost('debate')">Start Debate</button>
+          <div class="post-msg" id="deb-msg"></div>
+        </div>
+
+        <!-- DOC FORM -->
+        <div class="cform" id="cform-doc">
+          <div class="fg"><label>Document Title</label><input type="text" id="doc-title" placeholder="e.g. Proposal for new tax system"/></div>
+          <div class="fg"><label>Google Docs Link</label><input type="url" id="doc-link" placeholder="https://docs.google.com/…"/></div>
+          <div class="fg"><label>Description (optional)</label><textarea id="doc-desc" placeholder="What is this document about?" style="min-height:60px"></textarea></div>
+          <button class="post-btn" onclick="submitPost('doc')">Share Document</button>
+          <div class="post-msg" id="doc-msg"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEED -->
+    <div id="feed-wrap"><div class="empty-feed">Loading posts…</div></div>
+    <button class="load-more-btn" id="load-more-btn" style="display:none" onclick="loadMore()">Load more…</button>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="side-card">
+      <div class="side-title">Filter</div>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('post',this)">📝 Posts</button>
+        <button class="filter-btn" onclick="setFilter('petition',this)">✍️ Petitions</button>
+        <button class="filter-btn" onclick="setFilter('debate',this)">🗣 Debates</button>
+        <button class="filter-btn" onclick="setFilter('doc',this)">📄 Docs</button>
+      </div>
+    </div>
+    <div class="side-card">
+      <div class="side-title">Community Stats</div>
+      <div class="stats-list">
+        <div class="stat-row"><span class="stat-row-label">Total posts</span><span class="stat-row-val" id="stat-posts">—</span></div>
+        <div class="stat-row"><span class="stat-row-label">Active petitions</span><span class="stat-row-val" id="stat-petitions">—</span></div>
+        <div class="stat-row"><span class="stat-row-label">Open debates</span><span class="stat-row-val" id="stat-debates">—</span></div>
+        <div class="stat-row"><span class="stat-row-label">Documents shared</span><span class="stat-row-val" id="stat-docs">—</span></div>
+        <div class="stat-row"><span class="stat-row-label">Members</span><span class="stat-row-val" id="stat-members">—</span></div>
+      </div>
+    </div>
+    <div class="side-card">
+      <div class="side-title">🔥 Top Petitions</div>
+      <div class="top-list" id="top-petitions"><div style="color:var(--muted);font-style:italic;font-size:.85rem">No petitions yet.</div></div>
+    </div>
+    <div class="side-card">
+      <div class="side-title">📋 Rules</div>
+      <div style="font-size:.84rem;color:var(--muted);line-height:1.7">
+        Be respectful to all members.<br>
+        No spam or repeated posts.<br>
+        Petitions must be realistic.<br>
+        Debates must stay on topic.<br>
+        The president has final say on laws.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer style="display:block;max-width:100%"><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Community Portal &nbsp;·&nbsp; <em>Bazsinia is a fictional country created for entertainment among friends. Not affiliated with any real political party.</em></p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc,
+         query, orderBy, limit, startAfter, serverTimestamp, arrayUnion, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const ADMIN_EMAIL     = "admin@bazsinia.com";
+const PRESIDENT_EMAIL = "president@bazsinia.com";
+const EMOJIS = ['👍','❤️','🔥','👏','🤔'];
+const PAGE_SIZE = 10;
+
+let currentUser = null;
+let currentFilter = 'all';
+let lastDoc = null;
+let allPosts = [];
+let userReactions = {};
+let userSignatures = {};
+
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
+    document.getElementById('uname').textContent = user.displayName || user.email.split('@')[0];
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('guest-note').style.display = 'none';
+    document.getElementById('compose-inner').style.display = 'block';
+  } else {
+    document.getElementById('guest-note').style.display = 'block';
+    document.getElementById('compose-inner').style.display = 'none';
+  }
+  loadFeed(true);
+  loadSidebar();
+});
+
+window.doLogout = async function() { await signOut(auth); location.reload(); };
+
+window.switchCTab = function(e, name) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.cform').forEach(f => f.classList.remove('active'));
+  e.target.classList.add('active');
+  document.getElementById('cform-' + name).classList.add('active');
+};
+
+// ── SUBMIT POST ──
+window.submitPost = async function(type) {
+  if (!currentUser) return;
+  const msgs = {post:'p-msg', petition:'pet-msg', debate:'deb-msg', doc:'doc-msg'};
+  const msgEl = document.getElementById(msgs[type]);
+  msgEl.textContent = '';
+
+  let data = { type, authorId: currentUser.uid, authorName: currentUser.displayName || currentUser.email.split('@')[0], authorEmail: currentUser.email, createdAt: serverTimestamp(), reactions: {} };
+
+  if (type === 'post') {
+    const text = document.getElementById('p-text').value.trim();
+    if (!text) { msgEl.textContent = 'Please write something.'; return; }
+    data.text = text;
+  } else if (type === 'petition') {
+    const title = document.getElementById('pet-title').value.trim();
+    const desc  = document.getElementById('pet-desc').value.trim();
+    const goal  = parseInt(document.getElementById('pet-goal').value) || 10;
+    if (!title || !desc) { msgEl.textContent = 'Please fill in all fields.'; return; }
+    data.title = title; data.text = desc; data.goal = goal; data.signers = [];
+  } else if (type === 'debate') {
+    const title = document.getElementById('deb-title').value.trim();
+    const text  = document.getElementById('deb-text').value.trim();
+    if (!title || !text) { msgEl.textContent = 'Please fill in all fields.'; return; }
+    data.title = title; data.text = text;
+  } else if (type === 'doc') {
+    const title = document.getElementById('doc-title').value.trim();
+    const link  = document.getElementById('doc-link').value.trim();
+    const desc  = document.getElementById('doc-desc').value.trim();
+    if (!title || !link) { msgEl.textContent = 'Please add a title and link.'; return; }
+    if (!link.startsWith('http')) { msgEl.textContent = 'Please enter a valid link.'; return; }
+    data.title = title; data.link = link; data.text = desc;
+  }
+
+  msgEl.textContent = 'Posting…';
+  try {
+    await addDoc(collection(db, 'community'), data);
+    msgEl.textContent = '✓ Posted!';
+    // Clear form
+    ['p-text','pet-title','pet-desc','deb-title','deb-text','doc-title','doc-link','doc-desc'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('pet-goal').value = '10';
+    setTimeout(() => { msgEl.textContent = ''; }, 2000);
+    loadFeed(true);
+    loadSidebar();
+  } catch(e) { msgEl.textContent = 'Error: ' + e.message; }
+};
+
+// ── LOAD FEED ──
+async function loadFeed(reset = false) {
+  if (reset) { lastDoc = null; allPosts = []; }
+  let q = query(collection(db,'community'), orderBy('createdAt','desc'), limit(PAGE_SIZE));
+  if (lastDoc) q = query(collection(db,'community'), orderBy('createdAt','desc'), startAfter(lastDoc), limit(PAGE_SIZE));
+
+  const snap = await getDocs(q);
+  if (snap.empty && reset) {
+    document.getElementById('feed-wrap').innerHTML = '<div class="empty-feed">No posts yet. Be the first to post!</div>';
+    document.getElementById('load-more-btn').style.display = 'none';
+    return;
+  }
+
+  const docs = snap.docs;
+  lastDoc = docs[docs.length - 1];
+
+  // Load user reactions and signatures
+  if (currentUser) {
+    await Promise.all(docs.map(async d => {
+      const rsnap = await getDoc(doc(db,'community',d.id,'reactions',currentUser.uid));
+      if (rsnap.exists()) userReactions[d.id] = rsnap.data().emoji;
+      const data = d.data();
+      if (data.type === 'petition' && (data.signers||[]).includes(currentUser.uid)) {
+        userSignatures[d.id] = true;
+      }
+    }));
+  }
+
+  const newPosts = docs.map(d => ({id:d.id,...d.data()})).filter(p => !p.hidden);
+  if (reset) allPosts = newPosts; else allPosts = [...allPosts, ...newPosts];
+
+  renderFeed();
+  document.getElementById('load-more-btn').style.display = docs.length < PAGE_SIZE ? 'none' : 'block';
+}
+
+window.loadMore = function() { loadFeed(false); };
+
+function setFilter(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderFeed();
+}
+window.setFilter = setFilter;
+
+function renderFeed() {
+  const filtered = currentFilter === 'all' ? allPosts : allPosts.filter(p => p.type === currentFilter);
+  if (!filtered.length) {
+    document.getElementById('feed-wrap').innerHTML = '<div class="empty-feed">No posts found.</div>';
+    return;
+  }
+  document.getElementById('feed-wrap').innerHTML = filtered.map(p => renderPost(p)).join('');
+}
+
+function timeAgo(ts) {
+  if (!ts?.seconds) return 'just now';
+  const diff = Math.floor((Date.now() - ts.seconds*1000)/1000);
+  if (diff < 60) return diff + 's ago';
+  if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+  if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+  return Math.floor(diff/86400) + 'd ago';
+}
+
+function initials(name) {
+  return (name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+}
+
+const TYPE_LABELS = {post:'📝 Post', petition:'✍️ Petition', debate:'🗣 Debate', doc:'📄 Document'};
+const TYPE_BADGE  = {post:'ptb-post', petition:'ptb-petition', debate:'ptb-debate', doc:'ptb-doc'};
+
+function renderPost(p) {
+  const isOwner = currentUser && currentUser.uid === p.authorId;
+  const isSystem = p.authorId === 'system' || p.isSystemPost;
+  const myReaction = userReactions[p.id];
+  const reactionCounts = p.reactionCounts || {};
+
+  const reactHTML = EMOJIS.map(e => {
+    const cnt = reactionCounts[e] || 0;
+    const isMe = myReaction === e;
+    return `<button class="react-btn${isMe?' reacted':''}" onclick="window.react('${p.id}','${e}')">${e}${cnt>0?' '+cnt:''}</button>`;
+  }).join('');
+
+  let bodyExtra = '';
+
+  // Petition
+  if (p.type === 'petition') {
+    const signers = (p.signers||[]).length;
+    const goal = p.goal || 10;
+    const pct = Math.min(100, Math.round((signers/goal)*100));
+    const complete = signers >= goal;
+    const signed = currentUser && userSignatures[p.id];
+    bodyExtra = `<div class="petition-section">
+      <div class="pet-goal-row"><span>${signers} of ${goal} signatures</span><span>${pct}%</span></div>
+      <div class="pet-bar-wrap"><div class="pet-bar${complete?' complete':''}" style="width:${pct}%"></div></div>
+      ${complete ? '<span class="pet-complete-badge">✓ Goal reached — submitted as law proposal</span>' : ''}
+      ${currentUser
+        ? `<button class="sign-btn${signed?' signed':''}" onclick="window.signPetition('${p.id}')" ${signed||complete?'disabled':''}>${signed?'✓ Signed':complete?'Complete':'Sign Petition'}</button>`
+        : `<div style="font-size:.8rem;color:var(--muted);font-style:italic"><a href="index.html" style="color:var(--gold)">Sign in</a> to sign</div>`}
+    </div>`;
+  }
+
+  // Doc link
+  if (p.type === 'doc' && p.link) {
+    bodyExtra = `<a class="doc-link-card" href="${p.link}" target="_blank">
+      <span class="doc-icon">📄</span>
+      <div class="doc-info">
+        <div class="doc-title">${p.title||'Document'}</div>
+        <div class="doc-url">${p.link}</div>
+      </div>
+      <span class="doc-arrow">↗</span>
+    </a>`;
+  }
+
+  return `<div class="post-card${isSystem?' system-post':''}" id="pc-${p.id}">
+    <div class="post-header">
+      <div class="avatar" style="${isSystem?'background:rgba(201,168,76,.1);color:var(--gold);font-size:.7rem;':''}"}>${isSystem?'📋':initials(p.authorName)}</div>
+      <div class="post-meta">
+        <div class="post-author">${p.authorName||'Citizen'}</div>
+        <div class="post-time">${timeAgo(p.createdAt)}</div>
+      </div>
+      <span class="post-type-badge ${TYPE_BADGE[p.type]||'ptb-post'}">${TYPE_LABELS[p.type]||'Post'}</span>
+      ${currentUser && currentUser.uid === p.authorId ? `<button class="delete-btn" onclick="window.deletePost('${p.id}')">✕ Delete</button>` : ''}
+      ${currentUser && currentUser.email === ADMIN_EMAIL && currentUser.uid !== p.authorId ? `<button class="delete-btn" onclick="window.adminDelete('${p.id}','${(p.title||p.text||'').slice(0,30).replace(/'/g,'')}')" style="border-color:#8B6400;color:#C9A84C">🪵 Remove</button>` : ''}
+      ${currentUser && currentUser.uid !== p.authorId && currentUser.email !== ADMIN_EMAIL ? `<button class="delete-btn" onclick="window.reportPost('${p.id}')" style="border-color:#555;color:#888" title="Report this post">🚩</button>` : ''}
+    </div>
+    <div class="post-body">
+      ${p.title ? `<div class="post-title">${p.title}</div>` : ''}
+      ${p.text  ? `<div class="post-text">${p.text}</div>` : ''}
+    </div>
+    ${bodyExtra}
+    <div class="post-actions">
+      ${reactHTML}
+      <button class="comment-toggle-btn" onclick="window.toggleComments('${p.id}')">💬 Comments</button>
+      ${!isSystem && (p.reports||[]).length > 0 ? `<span style="font-size:.72rem;color:#888;font-style:italic;margin-left:auto">🚩 ${(p.reports||[]).length} report${(p.reports||[]).length!==1?'s':''}</span>` : ''}
+    </div>
+    <div class="comments-section" id="cs-${p.id}">
+      <div class="comments-inner" id="ci-${p.id}"><div class="no-comments">Loading…</div></div>
+      ${currentUser ? `<div class="comment-input-row">
+        <input class="comment-inp" id="cinp-${p.id}" placeholder="Add a comment…"/>
+        <button class="comment-send" onclick="window.sendComment('${p.id}')">Send</button>
+      </div>` : `<div class="no-comments"><a href="index.html" style="color:var(--gold)">Sign in</a> to comment.</div>`}
+    </div>
+  </div>`;
+}
+
+// ── REACTIONS ──
+window.react = async function(postId, emoji) {
+  if (!currentUser) { alert('Sign in to react.'); return; }
+  const rref = doc(db,'community',postId,'reactions',currentUser.uid);
+  const snap = await getDoc(rref);
+  const prev = snap.exists() ? snap.data().emoji : null;
+
+  // Get post data to update counts
+  const pref = doc(db,'community',postId);
+  const psnap = await getDoc(pref);
+  const counts = psnap.data().reactionCounts || {};
+
+  if (prev === emoji) {
+    await deleteDoc(rref);
+    counts[emoji] = Math.max(0,(counts[emoji]||1)-1);
+    delete userReactions[postId];
+  } else {
+    if (prev) counts[prev] = Math.max(0,(counts[prev]||1)-1);
+    await setDoc(rref, {emoji, uid:currentUser.uid});
+    counts[emoji] = (counts[emoji]||0)+1;
+    userReactions[postId] = emoji;
+  }
+  await updateDoc(pref, {reactionCounts: counts});
+
+  // Update local
+  const idx = allPosts.findIndex(p=>p.id===postId);
+  if (idx>-1) allPosts[idx].reactionCounts = counts;
+  renderFeed();
+};
+
+// ── SIGN PETITION ──
+window.signPetition = async function(postId) {
+  if (!currentUser || userSignatures[postId]) return;
+  const pref = doc(db,'community',postId);
+  const snap = await getDoc(pref);
+  const data = snap.data();
+  const signers = [...(data.signers||[]), currentUser.uid];
+  await updateDoc(pref, {signers});
+  userSignatures[postId] = true;
+
+  // Check if goal reached
+  if (signers.length >= (data.goal||10)) {
+    // Auto-post to public page as law proposal
+    await addDoc(collection(db,'content','laws','items'), {
+      title: '📜 Citizen Petition: ' + data.title,
+      body: data.text + '\n\n— Submitted by citizen petition with ' + signers.length + ' signatures.',
+      link: '', createdAt: serverTimestamp(), type:'laws', fromPetition:true
+    });
+  }
+
+  const idx = allPosts.findIndex(p=>p.id===postId);
+  if (idx>-1) allPosts[idx].signers = signers;
+  renderFeed();
+};
+
+// ── COMMENTS ──
+window.toggleComments = async function(postId) {
+  const cs = document.getElementById('cs-'+postId);
+  const isOpen = cs.classList.toggle('open');
+  if (isOpen) await loadComments(postId);
+};
+
+async function loadComments(postId) {
+  const ci = document.getElementById('ci-'+postId);
+  const q = query(collection(db,'community',postId,'comments'), orderBy('createdAt','asc'));
+  const snap = await getDocs(q);
+  if (snap.empty) { ci.innerHTML = '<div class="no-comments">No comments yet.</div>'; return; }
+  ci.innerHTML = snap.docs.map(d => {
+    const c = d.data();
+    return `<div class="comment-item"><div class="comment-author">${c.authorName||'Citizen'}</div><div class="comment-text">${c.text}</div></div>`;
+  }).join('');
+}
+
+window.sendComment = async function(postId) {
+  if (!currentUser) return;
+  const inp = document.getElementById('cinp-'+postId);
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value = '';
+  await addDoc(collection(db,'community',postId,'comments'), {
+    text, authorName: currentUser.displayName||currentUser.email.split('@')[0],
+    uid: currentUser.uid, createdAt: serverTimestamp()
+  });
+  await loadComments(postId);
+};
+
+// ── DELETE (own post) ──
+window.deletePost = async function(postId) {
+  if (!confirm('Delete your post? This cannot be undone.')) return;
+  await deleteDoc(doc(db,'community',postId));
+  allPosts = allPosts.filter(p=>p.id!==postId);
+  renderFeed();
+  loadSidebar();
+};
+
+// ── ADMIN REMOVE (logged publicly) ──
+window.adminDelete = async function(postId, preview) {
+  const reason = prompt(`Reason for removing this post? This will be logged publicly in the feed.\n\nPost: "${preview}…"`);
+  if (reason === null) return;
+  if (!reason.trim()) { alert('Please provide a reason.'); return; }
+  await deleteDoc(doc(db,'community',postId));
+  // Post a public removal notice
+  await addDoc(collection(db,'community'), {
+    type:'post',
+    authorId:'system',
+    authorName:'📋 Moderation Log',
+    authorEmail: ADMIN_EMAIL,
+    text:`A post was removed by the admin.\nReason: ${reason.trim()}`,
+    createdAt: serverTimestamp(),
+    reactions:{}, reactionCounts:{},
+    isSystemPost: true
+  });
+  allPosts = allPosts.filter(p=>p.id!==postId);
+  renderFeed();
+  loadSidebar();
+};
+
+// ── REPORT POST ──
+window.reportPost = async function(postId) {
+  if (!currentUser) return;
+  const pref = doc(db,'community',postId);
+  const snap = await getDoc(pref);
+  if (!snap.exists()) return;
+  const data = snap.data();
+  const reports = data.reports || [];
+  if (reports.includes(currentUser.uid)) {
+    alert('You have already reported this post.');
+    return;
+  }
+  if (!confirm('Report this post as rule-breaking?')) return;
+  const newReports = [...reports, currentUser.uid];
+  await updateDoc(pref, { reports: newReports });
+
+  // Auto-hide if 3+ reports
+  const REPORT_THRESHOLD = 3;
+  if (newReports.length >= REPORT_THRESHOLD) {
+    await updateDoc(pref, { hidden: true });
+    // Post a public notice
+    await addDoc(collection(db,'community'), {
+      type:'post',
+      authorId:'system',
+      authorName:'📋 Moderation Log',
+      authorEmail: 'system',
+      text:`A post was automatically hidden after receiving ${REPORT_THRESHOLD} reports from citizens.`,
+      createdAt: serverTimestamp(),
+      reactions:{}, reactionCounts:{},
+      isSystemPost: true
+    });
+    allPosts = allPosts.filter(p=>p.id!==postId);
+    renderFeed();
+    loadSidebar();
+    alert('This post has been hidden after enough reports. Thank you for keeping Bazsinia safe.');
+  } else {
+    alert(`Report submitted. ${REPORT_THRESHOLD - newReports.length} more report(s) needed to hide this post.`);
+    const idx = allPosts.findIndex(p=>p.id===postId);
+    if (idx>-1) allPosts[idx].reports = newReports;
+  }
+};
+
+// ── SIDEBAR ──
+async function loadSidebar() {
+  const snap = await getDocs(collection(db,'community'));
+  const posts = snap.docs.map(d=>({id:d.id,...d.data()}));
+  const total = posts.length;
+  const petitions = posts.filter(p=>p.type==='petition');
+  const debates   = posts.filter(p=>p.type==='debate');
+  const docs      = posts.filter(p=>p.type==='doc');
+  const members   = new Set(posts.map(p=>p.authorId)).size;
+
+  document.getElementById('stat-posts').textContent     = total;
+  document.getElementById('stat-petitions').textContent = petitions.length;
+  document.getElementById('stat-debates').textContent   = debates.length;
+  document.getElementById('stat-docs').textContent      = docs.length;
+  document.getElementById('stat-members').textContent   = members;
+
+  // Top petitions by signatures
+  const sorted = petitions.sort((a,b)=>(b.signers||[]).length-(a.signers||[]).length).slice(0,4);
+  document.getElementById('top-petitions').innerHTML = sorted.length
+    ? sorted.map((p,i)=>`<div class="top-item"><span class="top-rank">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'#'+(i+1)}</span><span class="top-name">${p.title||'Petition'}</span><span class="top-count">${(p.signers||[]).length} sig.</span></div>`).join('')
+    : '<div style="color:var(--muted);font-style:italic;font-size:.85rem">No petitions yet.</div>';
+}
+
+window.signPetition = window.signPetition;
+</script>
+</body>
+</html>
