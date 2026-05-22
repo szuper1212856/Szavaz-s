@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Bazsinia — Court of Law</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--deep:#0D0D0D;--panel:#181818;--border:#2A2A2A;--text:#F0EDE6;--muted:#888880;--red:#8B1A1A;--green:#2A5C3F;--blue:#1A4A8B}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--deep);color:var(--text);font-family:'EB Garamond',Georgia,serif;min-height:100vh}
+
+header{position:relative;text-align:center;padding:50px 20px 36px;border-bottom:1px solid var(--border)}
+header::after{content:'';position:absolute;bottom:-1px;left:50%;transform:translateX(-50%);width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.flag-stripe{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#8B1A1A 0%,#8B1A1A 33.3%,#C9A84C 33.3%,#C9A84C 66.6%,#2A5C3F 66.6%,#2A5C3F 100%)}
+.seal{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;border-radius:50%;border:2px solid var(--gold);background:radial-gradient(circle,#1a1500,#0D0D0D);font-size:26px;margin-bottom:14px;animation:sg 3s ease-in-out infinite alternate}
+@keyframes sg{from{box-shadow:0 0 20px rgba(201,168,76,.15)}to{box-shadow:0 0 40px rgba(201,168,76,.4)}}
+h1{font-family:'Playfair Display',serif;font-size:clamp(1.8rem,5vw,3.2rem);font-weight:900;letter-spacing:.06em;text-transform:uppercase;background:linear-gradient(135deg,var(--gold-light),var(--gold),#9A7430);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hsub{margin-top:8px;font-style:italic;font-size:.95rem;color:var(--muted)}
+.ubar{position:absolute;top:14px;right:16px;display:flex;gap:8px;align-items:center}
+.uname{font-size:.78rem;color:var(--muted);font-style:italic}
+.judge-badge{padding:3px 10px;background:rgba(201,168,76,.12);border:1px solid var(--gold);color:var(--gold-light);font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;border-radius:2px}
+.nlink{padding:4px 10px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.75rem;cursor:pointer;border-radius:2px;text-decoration:none;transition:border-color .2s,color .2s}
+.nlink:hover{border-color:var(--gold);color:var(--gold)}
+
+main{max-width:1060px;margin:0 auto;padding:40px 20px 70px;display:grid;grid-template-columns:1fr 300px;gap:26px}
+@media(max-width:780px){main{grid-template-columns:1fr}}
+
+/* SECTIONS */
+.stl{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--gold-light);margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.section{margin-bottom:32px}
+
+/* FORM */
+.form-box{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:20px 22px;margin-bottom:24px}
+.fg{margin-bottom:14px}
+.fg label{display:block;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.fg input,.fg textarea,.fg select{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.95rem;padding:9px 12px;border-radius:2px;outline:none;transition:border-color .2s;resize:vertical}
+.fg input:focus,.fg textarea:focus,.fg select:focus{border-color:var(--gold)}
+.fg textarea{min-height:90px}
+.fg select option{background:#111}
+.sbtn{padding:9px 24px;font-family:'Playfair Display',serif;font-size:.85rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:linear-gradient(135deg,#9A7430,var(--gold),#9A7430);background-size:200%;color:#000;border:none;border-radius:2px;cursor:pointer;transition:background-position .4s}
+.sbtn:hover:not(:disabled){background-position:100%}
+.sbtn:disabled{background:#2a2a2a;color:var(--muted);cursor:not-allowed}
+.form-msg{margin-top:8px;font-size:.82rem;font-style:italic;color:var(--muted);min-height:16px}
+
+/* CASE CARDS */
+.cases-list{display:grid;gap:16px}
+.case-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;overflow:hidden;transition:border-color .2s}
+.case-card:hover{border-color:rgba(201,168,76,.25)}
+.case-header{padding:16px 18px;display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+.case-num{font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.case-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--gold-light)}
+.case-meta{font-size:.78rem;color:var(--muted);margin-top:3px;font-style:italic}
+.case-status{flex-shrink:0;padding:3px 10px;border-radius:2px;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+.cs-open{background:rgba(58,143,232,.12);color:#3A8FE8;border:1px solid rgba(58,143,232,.3)}
+.cs-trial{background:rgba(201,168,76,.1);color:var(--gold);border:1px solid rgba(201,168,76,.3)}
+.cs-guilty{background:rgba(139,26,26,.2);color:#C07070;border:1px solid #8B1A1A}
+.cs-notguilty{background:rgba(42,92,63,.2);color:#7BC49A;border:1px solid #2A5C3F}
+.cs-dismissed{background:rgba(60,60,60,.4);color:var(--muted);border:1px solid #3a3a3a}
+
+/* CASE DETAIL */
+.case-body{display:none;border-top:1px solid var(--border)}
+.case-body.open{display:block}
+.case-section{padding:16px 18px;border-bottom:1px solid var(--border)}
+.case-section:last-child{border-bottom:none}
+.cs-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.case-text{font-size:.9rem;line-height:1.65;white-space:pre-wrap}
+
+/* ARGUMENT */
+.argument{background:#111;border-radius:2px;padding:12px 14px;margin-bottom:10px;border-left:3px solid var(--border)}
+.argument.plaintiff{border-left-color:#3A8FE8}
+.argument.defendant{border-left-color:#C07070}
+.argument.judge{border-left-color:var(--gold)}
+.arg-author{font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.arg-author.plaintiff{color:#3A8FE8}
+.arg-author.defendant{color:#C07070}
+.arg-author.judge{color:var(--gold)}
+.arg-text{font-size:.88rem;line-height:1.6}
+.arg-time{font-size:.68rem;color:var(--muted);font-style:italic;margin-top:4px}
+
+/* ARGUMENT INPUT */
+.arg-input-wrap{padding:14px 18px;border-top:1px solid var(--border);background:rgba(0,0,0,.2)}
+.arg-role-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.arg-role-label.plaintiff{color:#3A8FE8}
+.arg-role-label.defendant{color:#C07070}
+.arg-role-label.judge{color:var(--gold)}
+.arg-textarea{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.9rem;padding:9px 12px;border-radius:2px;outline:none;resize:vertical;min-height:70px;transition:border-color .2s;margin-bottom:8px}
+.arg-textarea:focus{border-color:var(--gold)}
+.arg-send-btn{padding:7px 18px;font-family:'EB Garamond',serif;font-size:.85rem;cursor:pointer;border-radius:2px;transition:background .2s,color .2s}
+.arg-send-btn.plaintiff{background:rgba(58,143,232,.15);border:1px solid rgba(58,143,232,.4);color:#3A8FE8}
+.arg-send-btn.plaintiff:hover{background:rgba(58,143,232,.3)}
+.arg-send-btn.defendant{background:rgba(139,26,26,.15);border:1px solid #8B1A1A;color:#C07070}
+.arg-send-btn.defendant:hover{background:rgba(139,26,26,.3)}
+.arg-send-btn.judge-btn{background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold-light)}
+.arg-send-btn.judge-btn:hover{background:rgba(201,168,76,.25)}
+
+/* VERDICT */
+.verdict-wrap{padding:14px 18px;background:rgba(0,0,0,.25);border-top:1px solid var(--border)}
+.verdict-title{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.verdict-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.vbtn{padding:8px 18px;font-family:'EB Garamond',serif;font-size:.85rem;cursor:pointer;border-radius:2px;transition:all .2s;font-weight:600}
+.vbtn-guilty{background:rgba(139,26,26,.2);border:1px solid #8B1A1A;color:#C07070}
+.vbtn-guilty:hover{background:rgba(139,26,26,.4)}
+.vbtn-notguilty{background:rgba(42,92,63,.2);border:1px solid #2A5C3F;color:#7BC49A}
+.vbtn-notguilty:hover{background:rgba(42,92,63,.4)}
+.vbtn-dismissed{background:rgba(60,60,60,.3);border:1px solid #3a3a3a;color:var(--muted)}
+.vbtn-dismissed:hover{background:rgba(60,60,60,.5)}
+.verdict-statement-inp{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.9rem;padding:9px 12px;border-radius:2px;outline:none;resize:vertical;min-height:60px;margin-bottom:8px;transition:border-color .2s}
+.verdict-statement-inp:focus{border-color:var(--gold)}
+
+/* VERDICT DISPLAY */
+.verdict-display{margin:0 18px 14px;padding:14px 16px;border-radius:2px;border-left:4px solid}
+.verdict-display.guilty{background:rgba(139,26,26,.12);border-left-color:#8B1A1A}
+.verdict-display.not-guilty{background:rgba(42,92,63,.12);border-left-color:#2A5C3F}
+.verdict-display.dismissed{background:rgba(60,60,60,.15);border-left-color:#555}
+.verdict-label{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.verdict-label.guilty{color:#C07070}
+.verdict-label.not-guilty{color:#7BC49A}
+.verdict-label.dismissed{color:var(--muted)}
+.verdict-statement{font-size:.88rem;color:var(--muted);font-style:italic;line-height:1.5;margin-top:6px}
+.verdict-judge{font-size:.72rem;color:var(--muted);margin-top:6px;letter-spacing:.08em;text-transform:uppercase}
+
+/* APPEAL */
+.appeal-section{padding:12px 18px 14px;border-top:1px solid var(--border)}
+.appeal-bar-wrap{height:6px;background:#222;border-radius:3px;overflow:hidden;margin:8px 0}
+.appeal-bar{height:100%;background:linear-gradient(90deg,#8B1A1A,#C07070);border-radius:3px;transition:width .5s}
+.appeal-btn{padding:6px 16px;background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold-light);font-family:'EB Garamond',serif;font-size:.82rem;cursor:pointer;border-radius:2px;transition:background .2s}
+.appeal-btn:hover:not(:disabled){background:rgba(201,168,76,.2)}
+.appeal-btn:disabled{opacity:.5;cursor:not-allowed}
+.appeal-btn.appealed{background:rgba(201,168,76,.2);cursor:not-allowed}
+
+/* SIDEBAR */
+.sidebar{align-content:start;display:grid;gap:16px}
+.side-card{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:16px 18px}
+.side-title{font-family:'Playfair Display',serif;font-size:.95rem;color:var(--gold-light);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.stat-row{display:flex;justify-content:space-between;font-size:.86rem;margin-bottom:7px}
+.stat-row-label{color:var(--muted)}
+.stat-row-val{font-family:'Playfair Display',serif;color:var(--gold-light)}
+.filter-btns{display:flex;flex-wrap:wrap;gap:6px}
+.filter-btn{padding:5px 11px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'EB Garamond',serif;font-size:.76rem;cursor:pointer;border-radius:2px;transition:all .2s}
+.filter-btn:hover,.filter-btn.active{border-color:var(--gold);color:var(--gold-light)}
+.filter-btn.active{background:rgba(201,168,76,.08)}
+.judge-panel{background:rgba(201,168,76,.05);border:1px solid rgba(201,168,76,.2);border-radius:2px;padding:12px 14px;font-size:.84rem}
+.judge-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);margin-bottom:2px}
+.judge-sub{font-size:.75rem;color:var(--muted);font-style:italic}
+.empty-state{color:var(--muted);font-style:italic;font-size:.88rem;text-align:center;padding:30px 16px;background:var(--panel);border:1px solid var(--border);border-radius:4px}
+
+/* MODAL */
+#mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:300;align-items:center;justify-content:center}
+#mo.show{display:flex}
+#md{background:var(--panel);border:1px solid var(--gold);border-radius:4px;padding:38px 42px;text-align:center;max-width:400px;width:90%;animation:mi .3s cubic-bezier(.22,.61,.36,1)}
+@keyframes mi{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+#md .mico{font-size:40px;margin-bottom:10px}
+#md h2{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:8px}
+#md p{color:var(--muted);font-style:italic;font-size:.9rem;line-height:1.6}
+#mc{margin-top:20px;padding:8px 24px;background:transparent;border:1px solid var(--gold);color:var(--gold);font-family:'EB Garamond',serif;font-size:.88rem;cursor:pointer;border-radius:2px;transition:background .2s,color .2s}
+#mc:hover{background:var(--gold);color:#000}
+
+footer{text-align:center;padding:22px 20px;border-top:1px solid var(--border);color:var(--muted);font-style:italic;font-size:.8rem}
+footer span{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="flag-stripe"></div>
+  <div class="ubar">
+    <span class="uname" id="uname"></span>
+    <span class="judge-badge" id="judge-badge" style="display:none">⚖️ Judge</span>
+    <a class="nlink" href="index.html">🗳 Vote</a>
+    <a class="nlink" href="public.html">🏛 Bazsinia</a>
+    <a class="nlink" href="community.html">💬 Community</a>
+    <a class="nlink" href="city.html">🏙 City</a>
+    <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="seal">⚖️</div>
+  <h1>Court of Bazsinia</h1>
+  <p class="hsub">The Supreme Court — file lawsuits, present arguments, receive verdicts</p>
+</header>
+
+<main>
+  <div>
+    <!-- FILE LAWSUIT -->
+    <div class="section" id="file-section" style="display:none">
+      <div class="stl">📋 File a Lawsuit</div>
+      <div class="form-box">
+        <div class="fg"><label>Case Title</label><input type="text" id="case-title" placeholder="e.g. Kiss Balázs v. Laki Dion — Property Dispute"/></div>
+        <div class="fg"><label>Plaintiff (you are filing on behalf of)</label><input type="text" id="case-plaintiff" placeholder="Your name or organisation"/></div>
+        <div class="fg"><label>Defendant (who are you suing?)</label><input type="text" id="case-defendant" placeholder="Name of the person or party"/></div>
+        <div class="fg"><label>Charges / Reason for Lawsuit</label><textarea id="case-charges" placeholder="Describe what happened and what you are claiming…"></textarea></div>
+        <div class="fg"><label>Evidence (optional — describe or paste a link)</label><textarea id="case-evidence" placeholder="List any evidence you have…" style="min-height:60px"></textarea></div>
+        <button class="sbtn" onclick="fileLawsuit()">File Lawsuit</button>
+        <div class="form-msg" id="file-msg"></div>
+      </div>
+    </div>
+    <div id="guest-note" style="display:none;background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:18px 20px;margin-bottom:24px;text-align:center;color:var(--muted);font-style:italic;font-size:.9rem">
+      <a href="index.html" style="color:var(--gold)">Sign in</a> to file a lawsuit or participate in trials.
+    </div>
+
+    <!-- CASES -->
+    <div class="stl">📁 Active Cases</div>
+    <div id="cases-wrap"><div class="empty-state">Loading cases…</div></div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- JUDGE PANEL (president only) -->
+    <div class="side-card" id="assign-judge-panel" style="display:none">
+      <div class="side-title">👑 Assign Judge</div>
+      <div class="fg" style="margin-bottom:10px">
+        <label>Select Judge</label>
+        <select id="judge-select"><option value="">Loading voters…</option></select>
+      </div>
+      <button class="sbtn" style="width:100%;padding:8px" onclick="assignJudge()">Assign as Judge</button>
+      <div class="form-msg" id="judge-msg"></div>
+    </div>
+
+    <!-- CURRENT JUDGE -->
+    <div class="side-card">
+      <div class="side-title">⚖️ Current Judge</div>
+      <div id="judge-display"><div style="color:var(--muted);font-style:italic;font-size:.85rem">No judge assigned yet.</div></div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="side-card">
+      <div class="side-title">Filter Cases</div>
+      <div class="filter-btns">
+        <button class="filter-btn active" onclick="setFilter('all',this)">All</button>
+        <button class="filter-btn" onclick="setFilter('open',this)">🔵 Open</button>
+        <button class="filter-btn" onclick="setFilter('trial',this)">🟡 In Trial</button>
+        <button class="filter-btn" onclick="setFilter('closed',this)">⚫ Closed</button>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="side-card">
+      <div class="side-title">Court Statistics</div>
+      <div class="stat-row"><span class="stat-row-label">Total cases</span><span class="stat-row-val" id="stat-total">—</span></div>
+      <div class="stat-row"><span class="stat-row-label">Open</span><span class="stat-row-val" id="stat-open">—</span></div>
+      <div class="stat-row"><span class="stat-row-label">In trial</span><span class="stat-row-val" id="stat-trial">—</span></div>
+      <div class="stat-row"><span class="stat-row-label">Guilty verdicts</span><span class="stat-row-val" id="stat-guilty">—</span></div>
+      <div class="stat-row"><span class="stat-row-label">Not guilty</span><span class="stat-row-val" id="stat-ng">—</span></div>
+      <div class="stat-row"><span class="stat-row-label">Dismissed</span><span class="stat-row-val" id="stat-dis">—</span></div>
+    </div>
+
+    <!-- RULES -->
+    <div class="side-card">
+      <div class="side-title">⚖️ Court Rules</div>
+      <div style="font-size:.83rem;color:var(--muted);line-height:1.75">
+        Anyone may file a lawsuit.<br>
+        Both sides present arguments.<br>
+        The judge has final say.<br>
+        Citizens may appeal a verdict.<br>
+        The president appoints the judge.<br>
+        False accusations are punishable.
+      </div>
+    </div>
+  </div>
+</main>
+
+<div id="mo"><div id="md">
+  <div class="mico" id="mico">⚖️</div>
+  <h2 id="mttl"></h2>
+  <p id="mbdy"></p>
+  <button id="mc" onclick="closeMo()">Close</button>
+</div></div>
+
+<footer><p>Republic of <span>Bazsinia</span> &nbsp;·&nbsp; Supreme Court &nbsp;·&nbsp; <em>Bazsinia is a fictional country for entertainment among friends. Not affiliated with any real political party.</em></p></footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc,
+         updateDoc, query, orderBy, serverTimestamp, arrayUnion }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyCACF0sU_5s5y7kbecGpSvOgmrFjc5Trgo",
+  authDomain:"bazsinia-election.firebaseapp.com",
+  projectId:"bazsinia-election",
+  storageBucket:"bazsinia-election.firebasestorage.app",
+  messagingSenderId:"298713386526",
+  appId:"1:298713386526:web:16478d19683e2399abe80f"
+});
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+const PRESIDENT_EMAIL = "president@bazsinia.com";
+const ADMIN_EMAIL     = "admin@bazsinia.com";
+
+let currentUser = null;
+let isPresident  = false;
+let isJudge      = false;
+let judgeEmail   = '';
+let currentFilter = 'all';
+let allCases = [];
+let userAppeals = {};
+
+onAuthStateChanged(auth, async user => {
+  currentUser = user;
+  if (user) {
+    isPresident = user.email === PRESIDENT_EMAIL || user.email === ADMIN_EMAIL;
+    document.getElementById('uname').textContent = user.displayName || user.email.split('@')[0];
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('file-section').style.display = 'block';
+    document.getElementById('guest-note').style.display = 'none';
+    if (isPresident) {
+      document.getElementById('assign-judge-panel').style.display = 'block';
+      await loadVotersDropdown();
+    }
+  } else {
+    document.getElementById('file-section').style.display = 'none';
+    document.getElementById('guest-note').style.display = 'block';
+  }
+  await loadJudge();
+  await loadCases();
+  updateStats();
+});
+
+window.doLogout = async function() { await signOut(auth); location.reload(); };
+
+// ── JUDGE ──
+async function loadJudge() {
+  const snap = await getDoc(doc(db,'court','config'));
+  if (snap.exists() && snap.data().judgeEmail) {
+    judgeEmail = snap.data().judgeEmail;
+    const jName = snap.data().judgeName || judgeEmail;
+    document.getElementById('judge-display').innerHTML = `
+      <div class="judge-panel">
+        <div class="judge-name">⚖️ ${jName}</div>
+        <div class="judge-sub">${judgeEmail}</div>
+      </div>`;
+    if (currentUser && currentUser.email === judgeEmail) {
+      isJudge = true;
+      document.getElementById('judge-badge').style.display = 'inline-block';
+    }
+  }
+}
+
+async function loadVotersDropdown() {
+  const snap = await getDocs(collection(db,'voters'));
+  const opts = ['<option value="">— Select a voter —</option>'];
+  snap.forEach(d => {
+    const v = d.data();
+    if (v.email && v.email !== ADMIN_EMAIL && v.email !== PRESIDENT_EMAIL) {
+      opts.push(`<option value="${v.email}" data-name="${v.name||v.email}">${v.name||v.email} (${v.email})</option>`);
+    }
+  });
+  document.getElementById('judge-select').innerHTML = opts.join('');
+}
+
+window.assignJudge = async function() {
+  const sel = document.getElementById('judge-select');
+  const email = sel.value;
+  const name  = sel.options[sel.selectedIndex]?.dataset.name || email;
+  const msg   = document.getElementById('judge-msg');
+  if (!email) { msg.textContent = 'Please select a voter.'; return; }
+  await setDoc(doc(db,'court','config'), { judgeEmail: email, judgeName: name, assignedAt: serverTimestamp() }, { merge: true });
+  msg.textContent = `✓ ${name} is now the judge.`;
+  judgeEmail = email;
+  document.getElementById('judge-display').innerHTML = `
+    <div class="judge-panel">
+      <div class="judge-name">⚖️ ${name}</div>
+      <div class="judge-sub">${email}</div>
+    </div>`;
+  setTimeout(() => msg.textContent = '', 2500);
+};
+
+// ── FILE LAWSUIT ──
+window.fileLawsuit = async function() {
+  if (!currentUser) return;
+  const title     = document.getElementById('case-title').value.trim();
+  const plaintiff = document.getElementById('case-plaintiff').value.trim();
+  const defendant = document.getElementById('case-defendant').value.trim();
+  const charges   = document.getElementById('case-charges').value.trim();
+  const evidence  = document.getElementById('case-evidence').value.trim();
+  const msg = document.getElementById('file-msg');
+  if (!title||!plaintiff||!defendant||!charges) { msg.textContent = 'Please fill in all required fields.'; return; }
+  msg.textContent = 'Filing…';
+  const caseNum = 'BZ-' + Date.now().toString().slice(-5);
+  await addDoc(collection(db,'court','cases','list'), {
+    caseNum, title, plaintiff, defendant, charges, evidence,
+    status: 'open', filedBy: currentUser.uid, filedByName: currentUser.displayName||currentUser.email.split('@')[0],
+    filedByEmail: currentUser.email, createdAt: serverTimestamp(),
+    arguments: [], appeals: [], verdict: null
+  });
+  ['case-title','case-plaintiff','case-defendant','case-charges','case-evidence'].forEach(id => document.getElementById(id).value = '');
+  msg.textContent = '✓ Lawsuit filed! Case number: ' + caseNum;
+  await loadCases();
+  updateStats();
+  showMo('📋','Lawsuit Filed',`Case ${caseNum} has been filed and is now open. Both parties may present their arguments.`);
+};
+
+// ── LOAD CASES ──
+async function loadCases() {
+  const q = query(collection(db,'court','cases','list'), orderBy('createdAt','desc'));
+  const snap = await getDocs(q);
+  allCases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  if (currentUser) {
+    const aSnap = await getDoc(doc(db,'court','appeals', currentUser.uid));
+    if (aSnap.exists()) userAppeals = aSnap.data();
+  }
+  renderCases();
+}
+
+function renderCases() {
+  const filtered = currentFilter === 'all' ? allCases :
+    currentFilter === 'closed' ? allCases.filter(c=>['guilty','not-guilty','dismissed'].includes(c.status)) :
+    allCases.filter(c => c.status === currentFilter);
+
+  if (!filtered.length) {
+    document.getElementById('cases-wrap').innerHTML = '<div class="empty-state">No cases found.</div>';
+    return;
+  }
+  document.getElementById('cases-wrap').innerHTML = `<div class="cases-list">${filtered.map(c => renderCase(c)).join('')}</div>`;
+}
+
+function statusLabel(s) {
+  if (s==='open') return ['cs-open','🔵 Open'];
+  if (s==='trial') return ['cs-trial','🟡 In Trial'];
+  if (s==='guilty') return ['cs-guilty','🔴 Guilty'];
+  if (s==='not-guilty') return ['cs-notguilty','🟢 Not Guilty'];
+  if (s==='dismissed') return ['cs-dismissed','⚫ Dismissed'];
+  return ['cs-open', s];
+}
+
+function timeAgo(ts) {
+  if (!ts?.seconds) return 'just now';
+  const d = Math.floor((Date.now()-ts.seconds*1000)/86400000);
+  if (d===0) return 'today';
+  if (d===1) return 'yesterday';
+  return d + ' days ago';
+}
+
+function renderCase(c) {
+  const [sc, sl] = statusLabel(c.status);
+  const isFiler  = currentUser && currentUser.uid === c.filedBy;
+  const isInCase = currentUser && (c.plaintiff?.toLowerCase().includes(currentUser.displayName?.toLowerCase()||'__') || c.defendant?.toLowerCase().includes(currentUser.displayName?.toLowerCase()||'__') || isFiler);
+  const closed   = ['guilty','not-guilty','dismissed'].includes(c.status);
+
+  const args = (c.arguments||[]).map(a => `
+    <div class="argument ${a.role}">
+      <div class="arg-author ${a.role}">${a.role === 'judge' ? '⚖️ Judge' : a.role === 'plaintiff' ? '🔵 Plaintiff' : '🔴 Defendant'} — ${a.authorName}</div>
+      <div class="arg-text">${a.text}</div>
+      <div class="arg-time">${timeAgo(a.ts)}</div>
+    </div>`).join('');
+
+  let inputSection = '';
+  if (!closed && currentUser) {
+    const isP = isFiler;
+    const isD = currentUser && c.defendant && currentUser.displayName && c.defendant.toLowerCase().includes(currentUser.displayName.toLowerCase());
+    if (isP || isD) {
+      const role = isP ? 'plaintiff' : 'defendant';
+      const roleLabel = isP ? '🔵 You are the Plaintiff' : '🔴 You are the Defendant';
+      const cls = isP ? 'plaintiff' : 'defendant';
+      inputSection = `<div class="arg-input-wrap">
+        <div class="arg-role-label ${cls}">${roleLabel}</div>
+        <textarea class="arg-textarea" id="arg-${c.id}" placeholder="Present your argument…"></textarea>
+        <button class="arg-send-btn ${cls}" onclick="window.sendArgument('${c.id}','${role}')">Submit Argument</button>
+      </div>`;
+    }
+    if (isJudge) {
+      inputSection += `<div class="arg-input-wrap" style="background:rgba(201,168,76,.04)">
+        <div class="arg-role-label judge">⚖️ Judge's Statement</div>
+        <textarea class="arg-textarea" id="jarg-${c.id}" placeholder="Add a judicial statement or question…"></textarea>
+        <button class="arg-send-btn judge-btn" onclick="window.sendArgument('${c.id}','judge')">Submit Statement</button>
+      </div>`;
+    }
+  }
+
+  let verdictSection = '';
+  if (c.verdict) {
+    const vClass = c.status === 'guilty' ? 'guilty' : c.status === 'not-guilty' ? 'not-guilty' : 'dismissed';
+    const vLabel = c.status === 'guilty' ? '🔴 Guilty' : c.status === 'not-guilty' ? '🟢 Not Guilty' : '⚫ Case Dismissed';
+    verdictSection = `<div class="verdict-display ${vClass}">
+      <div class="verdict-label ${vClass}">${vLabel}</div>
+      <div class="verdict-statement">"${c.verdict.statement}"</div>
+      <div class="verdict-judge">— Judge ${c.verdict.judgeName} · ${timeAgo(c.verdict.ts)}</div>
+    </div>`;
+
+    // Appeal section
+    const appeals = c.appeals || [];
+    const appealCount = appeals.length;
+    const appealGoal = 5;
+    const appealPct = Math.min(100, Math.round((appealCount/appealGoal)*100));
+    const hasAppealed = currentUser && appeals.includes(currentUser.uid);
+    verdictSection += `<div class="appeal-section">
+      <div style="font-size:.75rem;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Citizen Appeal</div>
+      <div style="font-size:.84rem;color:var(--muted)">If ${appealGoal} citizens appeal, the judge must review the verdict.</div>
+      <div class="appeal-bar-wrap"><div class="appeal-bar" style="width:${appealPct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted);margin-bottom:8px"><span>${appealCount} of ${appealGoal} appeals</span><span>${appealPct}%</span></div>
+      ${currentUser
+        ? `<button class="appeal-btn${hasAppealed?' appealed':''}" onclick="window.appealVerdict('${c.id}')" ${hasAppealed?'disabled':''}>${hasAppealed?'✓ Appealed':'Appeal Verdict'}</button>`
+        : `<div style="font-size:.8rem;color:var(--muted);font-style:italic"><a href="index.html" style="color:var(--gold)">Sign in</a> to appeal.</div>`}
+    </div>`;
+  }
+
+  let judgeVerdictForm = '';
+  if (isJudge && !closed) {
+    judgeVerdictForm = `<div class="verdict-wrap">
+      <div class="verdict-title">⚖️ Deliver Verdict</div>
+      <textarea class="verdict-statement-inp" id="vs-${c.id}" placeholder="Write your verdict statement and reasoning…"></textarea>
+      <div class="verdict-btns">
+        <button class="vbtn vbtn-guilty" onclick="window.deliverVerdict('${c.id}','guilty')">🔴 Guilty</button>
+        <button class="vbtn vbtn-notguilty" onclick="window.deliverVerdict('${c.id}','not-guilty')">🟢 Not Guilty</button>
+        <button class="vbtn vbtn-dismissed" onclick="window.deliverVerdict('${c.id}','dismissed')">⚫ Dismiss Case</button>
+      </div>
+    </div>`;
+  }
+
+  return `<div class="case-card">
+    <div class="case-header" onclick="toggleCase('${c.id}')">
+      <div style="flex:1">
+        <div class="case-num">${c.caseNum} · Filed ${timeAgo(c.createdAt)}</div>
+        <div class="case-title">${c.title}</div>
+        <div class="case-meta">${c.plaintiff} <span style="color:var(--muted)">vs.</span> ${c.defendant}</div>
+      </div>
+      <span class="case-status ${sc}">${sl}</span>
+    </div>
+    <div class="case-body" id="cb-${c.id}">
+      <div class="case-section">
+        <div class="cs-title">Charges</div>
+        <div class="case-text">${c.charges}</div>
+      </div>
+      ${c.evidence ? `<div class="case-section"><div class="cs-title">Evidence</div><div class="case-text">${c.evidence}</div></div>` : ''}
+      ${args ? `<div class="case-section"><div class="cs-title">Arguments</div>${args}</div>` : ''}
+      ${verdictSection}
+      ${inputSection}
+      ${judgeVerdictForm}
+    </div>
+  </div>`;
+}
+
+window.toggleCase = function(id) {
+  const cb = document.getElementById('cb-'+id);
+  if (cb) cb.classList.toggle('open');
+};
+
+// ── ARGUMENTS ──
+window.sendArgument = async function(caseId, role) {
+  if (!currentUser) return;
+  const inputId = role === 'judge' ? 'jarg-'+caseId : 'arg-'+caseId;
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  const text = inp.value.trim();
+  if (!text) { alert('Please write your argument first.'); return; }
+  const cref = doc(db,'court','cases','list',caseId);
+  const csnap = await getDoc(cref);
+  const args = csnap.data().arguments || [];
+  args.push({ role, text, authorName: currentUser.displayName||currentUser.email.split('@')[0], authorEmail: currentUser.email, ts: { seconds: Math.floor(Date.now()/1000) } });
+  await updateDoc(cref, { arguments: args, status: 'trial' });
+  inp.value = '';
+  await loadCases();
+};
+
+// ── VERDICT ──
+window.deliverVerdict = async function(caseId, verdict) {
+  if (!isJudge) return;
+  const stInp = document.getElementById('vs-'+caseId);
+  const statement = stInp ? stInp.value.trim() : '';
+  if (!statement) { alert('Please write your verdict statement first.'); return; }
+  if (!confirm(`Deliver verdict: ${verdict.toUpperCase()}?\n\nThis will be publicly recorded.`)) return;
+  const verdictLabels = { 'guilty':'Guilty','not-guilty':'Not Guilty','dismissed':'Case Dismissed' };
+  await updateDoc(doc(db,'court','cases','list',caseId), {
+    status: verdict,
+    verdict: { verdict, statement, judgeName: currentUser.displayName||currentUser.email.split('@')[0], judgeEmail: currentUser.email, ts: { seconds: Math.floor(Date.now()/1000) } }
+  });
+  await loadCases();
+  updateStats();
+  showMo('⚖️','Verdict Delivered',`The court finds the defendant: ${verdictLabels[verdict]}.\n\n"${statement}"`);
+};
+
+// ── APPEAL ──
+window.appealVerdict = async function(caseId) {
+  if (!currentUser) return;
+  const cref = doc(db,'court','cases','list',caseId);
+  const snap = await getDoc(cref);
+  const appeals = snap.data().appeals || [];
+  if (appeals.includes(currentUser.uid)) { alert('You have already appealed this verdict.'); return; }
+  const newAppeals = [...appeals, currentUser.uid];
+  await updateDoc(cref, { appeals: newAppeals });
+  const idx = allCases.findIndex(c=>c.id===caseId);
+  if (idx>-1) allCases[idx].appeals = newAppeals;
+  if (newAppeals.length >= 5) {
+    showMo('📣','Appeal Threshold Reached!','5 citizens have appealed this verdict. The judge must now review the case.');
+  }
+  renderCases();
+};
+
+// ── FILTER ──
+window.setFilter = function(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCases();
+};
+
+// ── STATS ──
+function updateStats() {
+  document.getElementById('stat-total').textContent   = allCases.length;
+  document.getElementById('stat-open').textContent    = allCases.filter(c=>c.status==='open').length;
+  document.getElementById('stat-trial').textContent   = allCases.filter(c=>c.status==='trial').length;
+  document.getElementById('stat-guilty').textContent  = allCases.filter(c=>c.status==='guilty').length;
+  document.getElementById('stat-ng').textContent      = allCases.filter(c=>c.status==='not-guilty').length;
+  document.getElementById('stat-dis').textContent     = allCases.filter(c=>c.status==='dismissed').length;
+}
+
+function showMo(ico,ttl,bdy) {
+  document.getElementById('mico').textContent=ico;
+  document.getElementById('mttl').textContent=ttl;
+  document.getElementById('mbdy').textContent=bdy;
+  document.getElementById('mo').classList.add('show');
+}
+window.closeMo = function() { document.getElementById('mo').classList.remove('show'); };
+document.getElementById('mo').addEventListener('click', e=>{if(e.target===e.currentTarget)window.closeMo();});
+</script>
+</body>
+</html>
