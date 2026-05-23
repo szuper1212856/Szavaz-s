@@ -144,6 +144,12 @@ main{max-width:1060px;margin:0 auto;padding:40px 20px 70px;display:grid;grid-tem
 .judge-name{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);margin-bottom:2px}
 .judge-sub{font-size:.75rem;color:var(--muted);font-style:italic}
 .empty-state{color:var(--muted);font-style:italic;font-size:.88rem;text-align:center;padding:30px 16px;background:var(--panel);border:1px solid var(--border);border-radius:4px}
+.temp-judge-banner{background:rgba(201,168,76,.07);border:1px solid rgba(201,168,76,.25);border-radius:2px;padding:10px 14px;margin-bottom:10px;font-size:.82rem;color:var(--gold);font-style:italic}
+.temp-judge-select{width:100%;background:#111;border:1px solid var(--border);color:var(--text);font-family:'EB Garamond',serif;font-size:.88rem;padding:7px 10px;border-radius:2px;outline:none;margin-bottom:8px;transition:border-color .2s}
+.temp-judge-select:focus{border-color:var(--gold)}
+.assign-temp-btn{padding:6px 16px;background:rgba(201,168,76,.1);border:1px solid var(--gold);color:var(--gold-light);font-family:'EB Garamond',serif;font-size:.82rem;cursor:pointer;border-radius:2px;transition:background .2s}
+.assign-temp-btn:hover{background:rgba(201,168,76,.2)}
+.temp-judge-badge{display:inline-block;padding:2px 8px;background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold);font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;border-radius:2px;margin-left:6px}
 
 /* MODAL */
 #mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.87);z-index:300;align-items:center;justify-content:center}
@@ -413,6 +419,7 @@ function renderCases() {
     return;
   }
   document.getElementById('cases-wrap').innerHTML = `<div class="cases-list">${filtered.map(c => renderCase(c)).join('')}</div>`;
+  if (isPresident) populateTempJudgeDropdowns();
 }
 
 function statusLabel(s) {
@@ -495,10 +502,36 @@ function renderCase(c) {
     </div>`;
   }
 
+  // Check if judge is involved in this case as a party
+  const judgeIsParty = judgeEmail && (
+    c.filedBy === currentUser?.uid ||
+    (currentUser && judgeEmail === currentUser.email && (
+      c.plaintiff?.toLowerCase().includes((currentUser.displayName||'').toLowerCase()) ||
+      c.defendant?.toLowerCase().includes((currentUser.displayName||'').toLowerCase())
+    ))
+  );
+  const effectiveJudge = c.tempJudgeEmail || judgeEmail;
+  const isEffectiveJudge = currentUser && currentUser.email === effectiveJudge;
+
   let judgeVerdictForm = '';
-  if (isJudge && !closed) {
-    judgeVerdictForm = `<div class="verdict-wrap">
-      <div class="verdict-title">⚖️ Deliver Verdict</div>
+  // Show temp judge assignment for president if judge is a party in this case
+  if (isPresident && !closed && judgeEmail && c.filedBy === (allCases.find(x=>x.id===c.id)||{}).filedBy) {
+    const judgeFiledThis = c.filedByEmail === judgeEmail;
+    const judgeNamedInCase = c.plaintiff?.toLowerCase().includes(judgeEmail.split('@')[0].toLowerCase()) || c.defendant?.toLowerCase().includes(judgeEmail.split('@')[0].toLowerCase());
+    if ((judgeFiledThis || judgeNamedInCase) && !c.tempJudgeEmail) {
+      judgeVerdictForm += `<div class="verdict-wrap" style="background:rgba(201,168,76,.04)">
+        <div class="temp-judge-banner">⚠️ The assigned judge is involved in this case. Assign a temporary judge.</div>
+        <select class="temp-judge-select" id="tj-${c.id}"><option value="">Loading voters…</option></select>
+        <button class="assign-temp-btn" onclick="window.assignTempJudge('${c.id}')">Assign Temp Judge</button>
+      </div>`;
+    }
+  }
+  if (c.tempJudgeEmail && !closed) {
+    judgeVerdictForm += `<div style="padding:8px 18px;font-size:.78rem;color:var(--gold);font-style:italic;border-top:1px solid var(--border)">⚖️ Temp Judge: ${c.tempJudgeName||c.tempJudgeEmail}</div>`;
+  }
+  if (isEffectiveJudge && !closed) {
+    judgeVerdictForm += `<div class="verdict-wrap">
+      <div class="verdict-title">⚖️ Deliver Verdict${c.tempJudgeEmail?'<span class="temp-judge-badge">Temp Judge</span>':''}</div>
       <textarea class="verdict-statement-inp" id="vs-${c.id}" placeholder="Write your verdict statement and reasoning…"></textarea>
       <div class="verdict-btns">
         <button class="vbtn vbtn-guilty" onclick="window.deliverVerdict('${c.id}','guilty')">🔴 Guilty</button>
@@ -552,6 +585,33 @@ window.sendArgument = async function(caseId, role) {
   inp.value = '';
   await loadCases();
 };
+
+// ── TEMP JUDGE ──
+window.assignTempJudge = async function(caseId) {
+  const sel = document.getElementById('tj-'+caseId);
+  if (!sel || !sel.value) { alert('Please select a voter first.'); return; }
+  const email = sel.value;
+  const name  = sel.options[sel.selectedIndex]?.text?.split('(')[0]?.trim() || email;
+  await updateDoc(doc(db,'court','cases','list',caseId), { tempJudgeEmail: email, tempJudgeName: name });
+  await loadCases();
+  showMo('⚖️','Temp Judge Assigned',`${name} will serve as temporary judge for this case only.`);
+};
+
+async function populateTempJudgeDropdowns() {
+  const snap = await getDocs(collection(db,'voters'));
+  document.querySelectorAll('[id^="tj-"]').forEach(sel => {
+    const caseId = sel.id.replace('tj-','');
+    const c = allCases.find(x=>x.id===caseId);
+    const opts = ['<option value="">— Select temp judge —</option>'];
+    snap.forEach(d => {
+      const v = d.data();
+      if (v.email && v.email !== judgeEmail && v.email !== ADMIN_EMAIL && v.email !== PRESIDENT_EMAIL) {
+        opts.push(`<option value="${v.email}">${v.name||v.email} (${v.email})</option>`);
+      }
+    });
+    sel.innerHTML = opts.join('');
+  });
+}
 
 // ── VERDICT ──
 window.deliverVerdict = async function(caseId, verdict) {
