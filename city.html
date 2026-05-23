@@ -161,7 +161,13 @@ main{max-width:1100px;margin:0 auto;padding:36px 20px 70px}
 .ai-confirm-btn:hover{background:rgba(42,92,63,.5)}
 .ai-msg{font-size:.8rem;font-style:italic;color:var(--muted);margin-top:8px}
 
-/* REVOLT BANNER *//* REVOLT BANNER */
+/* REVOLT BANNER *//* INACTIVITY BANNER */
+#inactive-banner{display:none;background:rgba(139,100,0,.2);border:1px solid #8B6400;border-radius:4px;padding:16px 20px;margin-bottom:20px;text-align:center}
+#inactive-banner h3{font-family:'Playfair Display',serif;color:#C9A84C;font-size:1.05rem;margin-bottom:4px}
+#inactive-banner p{color:#A08040;font-size:.86rem;line-height:1.5}
+#inactive-banner .days-count{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:#FF9900;display:block;margin:6px 0}
+
+/* REVOLT BANNER */
 #revolt-banner{display:none;background:rgba(139,26,26,.25);border:1px solid #8B1A1A;border-radius:4px;padding:14px 18px;margin-bottom:24px;text-align:center}
 #revolt-banner h3{font-family:'Playfair Display',serif;color:#FF6666;font-size:1.1rem;margin-bottom:4px}
 #revolt-banner p{color:#C07070;font-size:.88rem}
@@ -178,7 +184,6 @@ footer span{color:var(--gold)}
     <span class="uname" id="uname"></span>
     <a class="nlink" href="index.html">🗳 Vote</a>
     <a class="nlink" href="public.html">🏛 Bazsinia</a>
-    <a class="nlink" href="community.html">💬 Community</a>
     <button class="nlink" id="logout-btn" style="display:none" onclick="doLogout()">Logout</button>
   </div>
   <h1>🏙 City of Bazsinia</h1>
@@ -188,6 +193,12 @@ footer span{color:var(--gold)}
 <div class="pres-bar" id="pres-bar">Loading city status…</div>
 
 <main>
+  <div id="inactive-banner">
+    <h3>⏰ Presidential Inactivity Warning</h3>
+    <span class="days-count" id="inactive-days">0</span>
+    <p id="inactive-msg">days since the president last took action. The city is suffering from lack of leadership.</p>
+  </div>
+
   <div id="revolt-banner">
     <h3>⚠️ Citizens are revolting!</h3>
     <p>Happiness has dropped critically low. The president must act immediately or face a confidence vote.</p>
@@ -533,6 +544,133 @@ function checkRevolt() {
   document.getElementById('revolt-banner').style.display = h < 20 ? 'block' : 'none';
 }
 
+function checkInactivity() {
+  if (!cityState) return;
+  const lastAction = cityState.lastActionTimestamp;
+  if (!lastAction) return;
+  const now = Date.now();
+  const lastMs = lastAction.seconds ? lastAction.seconds * 1000 : lastAction;
+  const daysSince = Math.floor((now - lastMs) / (1000 * 60 * 60 * 24));
+  const INACTIVE_DAYS = 7;
+  const banner = document.getElementById('inactive-banner');
+  const daysEl = document.getElementById('inactive-days');
+  const msgEl  = document.getElementById('inactive-msg');
+
+  if (daysSince >= INACTIVE_DAYS) {
+    banner.style.display = 'block';
+    daysEl.textContent = daysSince;
+    if (daysSince >= 21) {
+      banner.style.background = 'rgba(139,26,26,.3)';
+      banner.style.borderColor = '#8B1A1A';
+      banner.querySelector('h3').textContent = '💀 State of Emergency';
+      banner.querySelector('h3').style.color = '#FF4444';
+      msgEl.textContent = 'days of total presidential absence. Bazsinia is collapsing. Crime is rampant, hospitals are shut and the city is in chaos.';
+      daysEl.style.color = '#FF2222';
+    } else if (daysSince >= 14) {
+      banner.style.background = 'rgba(139,26,26,.22)';
+      banner.style.borderColor = '#8B1A1A';
+      banner.querySelector('h3').textContent = '🔥 City on Strike';
+      banner.querySelector('h3').style.color = '#FF6644';
+      msgEl.textContent = 'days without leadership. Workers are striking, schools are closed and hospitals are empty.';
+      daysEl.style.color = '#FF4400';
+    } else if (daysSince >= 10) {
+      banner.style.background = 'rgba(120,60,0,.22)';
+      banner.style.borderColor = '#884400';
+      banner.querySelector('h3').textContent = '✊ Citizens Protesting';
+      banner.querySelector('h3').style.color = '#FF8844';
+      msgEl.textContent = 'days of inactivity. Protests are breaking out across the city. Crime is rising fast.';
+      daysEl.style.color = '#FF6600';
+    } else {
+      banner.style.background = 'rgba(139,100,0,.2)';
+      banner.style.borderColor = '#8B6400';
+      banner.querySelector('h3').textContent = '⏰ Presidential Inactivity Warning';
+      banner.querySelector('h3').style.color = '#C9A84C';
+      msgEl.textContent = 'days since the president last took action. Citizens are growing restless.';
+      daysEl.style.color = '#FF9900';
+    }
+    applyInactivityDecay(daysSince);
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+let decayApplied = false;
+
+const INACTIVITY_STAGES = [
+  {
+    days: 7,
+    icon: '😤',
+    title: 'Citizens Growing Restless',
+    desc: 'The president has been missing for a week. Workers are slowing down, morale is dropping and people are starting to talk.',
+    effects: { happiness: -8, crime: +6 },
+    logText: '😤 Citizens growing restless after 7 days of no presidential action.'
+  },
+  {
+    days: 10,
+    icon: '✊',
+    title: 'Street Protests Break Out',
+    desc: 'Hundreds of citizens have taken to the streets demanding the president show up. Police are struggling to maintain order.',
+    effects: { happiness: -12, crime: +10, infrastructure: -5 },
+    logText: '✊ Street protests erupted after 10 days of inactivity.'
+  },
+  {
+    days: 14,
+    icon: '🔥',
+    title: 'City in Crisis — Full Strike',
+    desc: 'Workers across all sectors have gone on strike. Hospitals are understaffed, schools are closed and roads are unrepaired. The city is grinding to a halt.',
+    effects: { happiness: -18, crime: +15, health: -12, education: -10, infrastructure: -10 },
+    logText: '🔥 Full city strike after 14 days of presidential absence.'
+  },
+  {
+    days: 21,
+    icon: '💀',
+    title: 'Total Collapse — State of Emergency',
+    desc: 'Bazsinia is in a state of emergency. Criminals control entire districts, hospitals have shut down, schools are empty and the city budget is hemorrhaging. The president has completely abandoned their duty.',
+    effects: { happiness: -25, crime: +25, health: -20, education: -15, infrastructure: -20, budget: -20 },
+    logText: '💀 State of emergency declared after 21 days of no presidential leadership.'
+  }
+];
+
+async function applyInactivityDecay(days) {
+  if (decayApplied || !cityState) return;
+  decayApplied = true;
+
+  const now = Date.now();
+  const lastDecay = cityState.lastDecayTimestamp;
+  if (lastDecay) {
+    const lastDecayMs = lastDecay.seconds ? lastDecay.seconds * 1000 : lastDecay;
+    const hoursSinceDecay = (now - lastDecayMs) / (1000 * 60 * 60);
+    if (hoursSinceDecay < 24) return;
+  }
+
+  // Find which stage applies
+  const stage = [...INACTIVITY_STAGES].reverse().find(s => days >= s.days);
+  if (!stage) return;
+
+  const updates = { lastDecayTimestamp: serverTimestamp() };
+  Object.entries(stage.effects).forEach(([k, v]) => {
+    updates['prev_' + k] = cityState[k] || 0;
+    updates[k] = clamp((cityState[k] || 0) + v);
+  });
+
+  await updateDoc(doc(db,'city','state'), updates);
+  cityState = {...cityState, ...updates};
+
+  await addDoc(collection(db,'city','events'), {
+    icon: stage.icon,
+    title: stage.title,
+    desc: stage.desc,
+    type: 'crisis', ts: serverTimestamp()
+  });
+  await addDoc(collection(db,'city','log'), {
+    text: stage.logText,
+    type: 'crisis', ts: serverTimestamp()
+  });
+  renderStats();
+  await loadEvents();
+  await loadLog();
+}
+
 function getCurrentMonthKey() { const n=new Date(); return `${n.getFullYear()}-${n.getMonth()+1}`; }
 
 function renderPresidentPanel() {
@@ -573,6 +711,7 @@ function renderAll() {
   renderStats();
   renderPresidentPanel();
   checkRevolt();
+  checkInactivity();
   renderPetition();
   renderPoll();
   if (isPresident) initTaxSlider();
@@ -603,8 +742,10 @@ window.doAction = async function(actionId) {
     await addDoc(collection(db,'city','log'), {text:`🕊️ Peace treaty signed. The war is over.`,type:'good',ts:serverTimestamp()});
   }
 
+  updates.lastActionTimestamp = serverTimestamp();
   await updateDoc(doc(db,'city','state'), updates);
   cityState = {...cityState, ...updates};
+  decayApplied = false;
 
   await addDoc(collection(db,'city','events'), {
     icon: action.icon, title: action.title,
@@ -807,6 +948,8 @@ window.applyTax = async function() {
     budget: clamp((cityState.budget || 70) + budgetChange),
     happiness: clamp((cityState.happiness || 65) + happyChange),
   };
+  updates.lastActionTimestamp = serverTimestamp();
+  decayApplied = false;
   await updateDoc(doc(db,'city','state'), updates);
   cityState = {...cityState, ...updates};
   await addDoc(collection(db,'city','events'), {
@@ -889,6 +1032,8 @@ window.applyAiLaw = async function() {
       updates[k] = clamp((cityState[k]||0) + v);
     }
   });
+  updates.lastActionTimestamp = serverTimestamp();
+  decayApplied = false;
   await updateDoc(doc(db,'city','state'), updates);
   cityState = {...cityState,...updates};
   await addDoc(collection(db,'city','events'), {
@@ -905,7 +1050,6 @@ window.applyAiLaw = async function() {
   showMo('📜','Law Enacted!',`"${pendingLawTitle}" is now law in Bazsinia.`,'');
   await loadEvents(); await loadLog();
 };
-
 function initTaxAfterRender() {
   if (isPresident) initTaxSlider();
 }
