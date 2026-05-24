@@ -459,28 +459,28 @@ onAuthStateChanged(auth, async user => {
 window.doLogout = async function() { await signOut(auth); location.reload(); };
 
 async function loadCityState() {
-  const snap = await getDoc(doc(db, 'city', 'state'));
+  const snap = await getDoc(doc(db,'cityState','main'));
   if (snap.exists()) {
     cityState = snap.data();
   } else {
     cityState = { ...DEFAULT_CITY };
-    await setDoc(doc(db, 'city', 'state'), cityState);
+    await setDoc(doc(db,'cityState','main'), cityState);
   }
 }
 
 function setupRealtimeListener() {
-  onSnapshot(doc(db, 'city', 'state'), snap => {
+  onSnapshot(doc(db,'cityState','main'), snap => {
     if (snap.exists()) { cityState = snap.data(); renderStats(); renderPresidentPanel(); checkRevolt(); }
   });
 }
 
 async function loadUserInteractions() {
   if (!currentUser) return;
-  const psnap = await getDoc(doc(db, 'city', 'petition'));
+  const psnap = await getDoc(doc(db,'cityPetition','main'));
   if (psnap.exists() && psnap.data().signers) {
     userPetitionSigned = psnap.data().signers.includes(currentUser.uid);
   }
-  const pollSnap = await getDoc(doc(db, 'city', 'poll'));
+  const pollSnap = await getDoc(doc(db,'cityPoll','main'));
   if (pollSnap.exists() && pollSnap.data().votes && pollSnap.data().votes[currentUser.uid]) {
     userPollVoted = pollSnap.data().votes[currentUser.uid];
   }
